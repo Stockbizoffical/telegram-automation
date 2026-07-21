@@ -1,10 +1,13 @@
-name: Telegram Bot
+name: Stock Biz Automation
 
 on:
   workflow_dispatch:
 
+  schedule:
+    - cron: "*/5 * * * *"
+
 jobs:
-  send-message:
+  telegram-bot:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,11 +18,14 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
 
       - name: Install Requirements
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Run Bot
+      - name: Run Stock Biz Bot
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
