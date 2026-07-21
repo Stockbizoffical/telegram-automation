@@ -50,3 +50,4 @@ jobs:
             git commit -m "Update last_news.json"
             git push origin main
           fi
+          
