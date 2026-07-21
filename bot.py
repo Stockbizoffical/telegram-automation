@@ -1,25 +1,20 @@
 import os
-import requests
+from scripts.telegram import send_message
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHANNEL_ID = os.environ["CHANNEL_ID"]
 
 message = """
-🚀 Stock Biz Automation Started Successfully!
+🚀 Stock Biz AI Automation
 
-✅ Telegram Bot Connected
-✅ GitHub Actions Working
+✅ Professional Project Structure Ready
+✅ Telegram Module Connected
 
-यह पहला Test Message है।
+अब अगला Step:
+📊 BSE + NSE Automation
+🤖 AI Summary
 """
 
-url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+result = send_message(BOT_TOKEN, CHANNEL_ID, message)
 
-payload = {
-    "chat_id": CHANNEL_ID,
-    "text": message
-}
-
-response = requests.post(url, data=payload)
-
-print(response.text)
+print(result)
