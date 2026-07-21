@@ -1,26 +1,26 @@
 {
-  "bse": {
-    "last_news_id": ""
-  },
-  "nse": {
-    "last_news_id": ""
-  },
-  "financial_results": {
-    "last_news_id": ""
-  },
-  "dividend": {
-    "last_news_id": ""
-  },
-  "bonus": {
-    "last_news_id": ""
-  },
-  "split": {
-    "last_news_id": ""
-  },
-  "board_meeting": {
-    "last_news_id": ""
-  },
-  "bulk_deal": {
-    "last_news_id": ""
-  }
+    "bse": {
+        "last_news_id": "ddcde992-ecbd-48e6-b8de-ea3a4a307c1b"
+    },
+    "nse": {
+        "last_news_id": ""
+    },
+    "financial_results": {
+        "last_news_id": ""
+    },
+    "dividend": {
+        "last_news_id": ""
+    },
+    "bonus": {
+        "last_news_id": ""
+    },
+    "split": {
+        "last_news_id": ""
+    },
+    "board_meeting": {
+        "last_news_id": ""
+    },
+    "bulk_deal": {
+        "last_news_id": ""
+    }
 }
