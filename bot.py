@@ -1,17 +1,29 @@
-from scripts.telegram import send_message
 from scripts.bse import get_bse_announcements
+from scripts.telegram import send_message
 
-try:
-    data = get_bse_announcements()
+announcements = get_bse_announcements()
 
-    if data:
-        message = "✅ BSE API Connected Successfully!"
-    else:
-        message = "❌ No data received from BSE API."
+if not announcements:
+    send_message("❌ No data received from BSE API.")
+else:
+    first = announcements[0]
 
-except Exception as e:
-    message = f"❌ Error:\n{e}"
+    company = first.get("SLONGNAME", "N/A")
+    subject = first.get("NEWSSUB", "N/A")
+    date = first.get("NEWS_DT", "N/A")
+    pdf = first.get("NSURL", "")
 
-send_message(message)
+    message = f"""📢 BSE Corporate Announcement
 
-print("Message Sent Successfully")
+🏢 Company: {company}
+
+📌 Subject:
+{subject}
+
+📅 Date: {date}
+
+🔗 PDF:
+{pdf}
+"""
+
+    send_message(message)
