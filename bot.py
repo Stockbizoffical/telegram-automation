@@ -6,34 +6,8 @@ from scripts.filters import get_category
 
 SOURCE = "bse"
 
-announcements = get_bse_announcements()
-
-if not announcements:
-    print("❌ No announcements found.")
-    exit()
-
-first = announcements[0]
-
-news_id = first.get("NEWSID", "")
-subject = first.get("NEWSSUB", "")
-
-# Duplicate Filter
-last_news = get_last_news(SOURCE)
-
-if news_id == last_news:
-    print("✅ No new announcement.")
-    exit()
-
-save_last_news(SOURCE, news_id)
-
-# Category Detection
-category = get_category(subject)
-
-print(f"Category : {category}")
-
-# अभी सभी Category Telegram पर भेजेंगे
-# अगले Step में केवल Selected Category भेजेंगे
-
-message = format_bse_announcement(first)
-
-send_message(message)
+# केवल ये Categories Telegram पर जाएंगी
+ALLOWED_CATEGORIES = [
+    "RESULT",
+    "DIVIDEND",
+    "BON
