@@ -1,55 +1,36 @@
 from scripts.bse import get_bse_announcements
 from scripts.telegram import send_message
 from scripts.storage import get_last_news, save_last_news
+from scripts.formatter import format_bse_announcement
 
 SOURCE = "bse"
 
-announcements = get_bse_announcements()
 
-if not announcements:
-    print("No announcements found.")
-    exit()
+def main():
+    announcements = get_bse_announcements()
 
-first = announcements[0]
+    if not announcements:
+        print("❌ No announcements found.")
+        return
 
-news_id = first.get("NEWSID", "")
+    first = announcements[0]
 
-last_news = get_last_news(SOURCE)
+    news_id = first.get("NEWSID", "")
 
-if news_id == last_news:
-    print("No new announcement.")
-    exit()
+    last_news = get_last_news(SOURCE)
 
-save_last_news(SOURCE, news_id)
+    if news_id == last_news:
+        print("✅ No new announcement.")
+        return
 
-company = first.get("SLONGNAME", "N/A")
-subject = first.get("NEWSSUB", "N/A")
-date = first.get("NEWS_DT", "N/A")
-pdf = first.get("NSURL", "")
+    save_last_news(SOURCE, news_id)
 
-message = f"""📢 BSE Corporate Announcement
+    message = format_bse_announcement(first)
 
-🏢 Company
-{company}
+    send_message(message)
 
-📌 Subject
-{subject}
+    print("✅ Announcement Sent Successfully")
 
-📅 Date
-{date}
-"""
 
-if pdf:
-    message += f"""
-
-📄 PDF
-{pdf}
-"""
-
-message += """
-
-━━━━━━━━━━━━━━━━━━
-🚀 Stock Biz AI Automation
-"""
-
-send_message(message)
+if __name__ == "__main__":
+    main()
