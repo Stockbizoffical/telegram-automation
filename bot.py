@@ -20,6 +20,8 @@ if news_id == last_news:
     print("No new announcement.")
     exit()
 
+save_last_news(SOURCE, news_id)
+
 company = first.get("SLONGNAME", "N/A")
 subject = first.get("NEWSSUB", "N/A")
 date = first.get("NEWS_DT", "N/A")
@@ -51,7 +53,3 @@ message += """
 """
 
 send_message(message)
-
-save_last_news(SOURCE, news_id)
-
-print("Announcement sent successfully.")
