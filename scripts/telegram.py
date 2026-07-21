@@ -1,19 +1,12 @@
-import os
+import requests
+from scripts.config import BOT_TOKEN, CHANNEL_ID
 
-from scripts.telegram import send_message
-from scripts.bse import get_bse_announcements
+def send_message(text):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
-try:
-    data = get_bse_announcements()
+    data = {
+        "chat_id": CHANNEL_ID,
+        "text": text
+    }
 
-    if data:
-        message = "✅ BSE API Connected Successfully!"
-    else:
-        message = "❌ No data received from BSE API."
-
-except Exception as e:
-    message = f"❌ Error:\n{e}"
-
-send_message(message)
-
-print("Message Sent Successfully")
+    requests.post(url, data=data)
