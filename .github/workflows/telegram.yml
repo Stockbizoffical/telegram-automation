@@ -10,9 +10,14 @@ jobs:
   telegram-bot:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -30,3 +35,14 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
         run: python bot.py
+
+      - name: Commit updated data
+        run: |
+          git config --global user.name "Stock Biz Bot"
+          git config --global user.email "bot@stockbiz.in"
+
+          git add data/
+
+          git diff --cached --quiet || git commit -m "Update last announcement"
+
+          git push
