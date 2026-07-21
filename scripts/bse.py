@@ -6,6 +6,8 @@ URL = "https://api.bseindia.com/BseIndiaAPI/api/AnnSubCategoryGetData/w"
 HEADERS = {
     "User-Agent": "Mozilla/5.0",
     "Referer": "https://www.bseindia.com/",
+    "Accept": "application/json, text/plain, */*",
+    "Origin": "https://www.bseindia.com",
 }
 
 def get_bse_announcements():
@@ -30,13 +32,27 @@ def get_bse_announcements():
             timeout=20
         )
 
+        print("=" * 60)
+        print("STATUS CODE:", r.status_code)
+        print("REQUEST URL:", r.url)
+        print("=" * 60)
+        print("RESPONSE:")
+        print(r.text[:2000])
+        print("=" * 60)
+
+        if r.status_code != 200:
+            return []
+
         data = r.json()
 
+        print("JSON KEYS:", data.keys())
+
         if "Table" in data:
+            print("TOTAL RECORDS:", len(data["Table"]))
             return data["Table"]
 
         return []
 
     except Exception as e:
-        print(e)
+        print("ERROR:", str(e))
         return []
