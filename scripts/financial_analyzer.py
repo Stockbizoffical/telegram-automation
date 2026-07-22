@@ -35,30 +35,24 @@ def get_rating(growth: Optional[float]) -> str:
     if growth is None:
         return "⚪ Unknown"
 
-    if growth >= 30:
-        return "🚀 Outstanding"
-
-    if growth >= 20:
+    if growth >= 25:
         return "🟢 Excellent"
 
-    if growth >= 10:
+    if growth >= 15:
         return "🟢 Strong"
 
     if growth >= 5:
         return "🟡 Positive"
 
     if growth >= 0:
-        return "🟠 Stable"
+        return "🟠 Flat"
 
-    if growth >= -10:
-        return "🔴 Weak"
-
-    return "⚫ Poor"
+    return "🔴 Weak"
 
 
 def calculate_score(result: dict) -> int:
     """
-    AI Impact Score
+    Calculate Overall Financial Score
     """
 
     score = 50
@@ -67,49 +61,22 @@ def calculate_score(result: dict) -> int:
     pat = result.get("PAT Growth")
     eps = result.get("EPS Growth")
 
-    # Revenue
-
     if revenue is not None:
-
-        if revenue >= 30:
-            score += 20
-
-        elif revenue >= 20:
+        if revenue > 15:
             score += 15
-
-        elif revenue >= 10:
-            score += 10
-
-        elif revenue >= 5:
-            score += 5
-
-    # PAT
+        elif revenue > 5:
+            score += 8
 
     if pat is not None:
-
-        if pat >= 30:
-            score += 25
-
-        elif pat >= 20:
+        if pat > 20:
             score += 20
-
-        elif pat >= 10:
-            score += 12
-
-        elif pat >= 5:
-            score += 6
-
-    # EPS
-
-    if eps is not None:
-
-        if eps >= 20:
-            score += 15
-
-        elif eps >= 10:
+        elif pat > 10:
             score += 10
 
-        elif eps >= 5:
+    if eps is not None:
+        if eps > 15:
+            score += 10
+        elif eps > 5:
             score += 5
 
     return min(score, 100)
