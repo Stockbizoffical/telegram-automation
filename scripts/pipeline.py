@@ -70,16 +70,4 @@ def analyze_pdf(pdf_url):
         "ai": ai
 
     }
-    return {
-
-    "metrics": metrics,
-
-    "financial_data": financial_data,
-
-    "trend": trend,
-
-    "quality": quality,
-
-    "ai": ai
-
-}
+    
