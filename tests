@@ -1,0 +1,10 @@
+Stock Biz AI/
+
+bot.py
+requirements.txt
+
+scripts/
+data/
+
+tests/
+    test_pipeline.py
