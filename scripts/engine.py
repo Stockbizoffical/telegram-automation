@@ -1,27 +1,32 @@
-from scripts.filters import get_category
+from scripts.filters import get_category, get_impact_score
+from scripts.storage import is_duplicate
 
-ALLOWED_CATEGORIES = [
-    "RESULT",
-    "DIVIDEND",
-    "BONUS",
-    "SPLIT",
-    "BUYBACK",
-    "RIGHTS",
-    "QIP",
-    "BOARD",
-    "BULK",
-]
+MIN_IMPACT_SCORE = 80
 
 
-def get_valid_announcements(announcements):
+def get_valid_announcements(announcements, source="bse"):
+
     valid = []
 
     for item in announcements:
-        subject = item.get("NEWSSUB", "")
-        category = get_category(subject)
 
-        if category in ALLOWED_CATEGORIES:
-            item["CATEGORY"] = category
-            valid.append(item)
+        news_id = item.get("NEWSID", "")
+        subject = item.get("NEWSSUB", "")
+
+        category = get_category(subject)
+        score = get_impact_score(category)
+
+        # Ignore Low Priority News
+        if score < MIN_IMPACT_SCORE:
+            continue
+
+        # Duplicate Check
+        if is_duplicate(source, news_id):
+            continue
+
+        item["CATEGORY"] = category
+        item["IMPACT_SCORE"] = score
+
+        valid.append(item)
 
     return valid
