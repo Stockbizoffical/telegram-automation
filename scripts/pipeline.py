@@ -6,7 +6,11 @@ Pipeline Module
 from scripts.pdf_reader import process_pdf, delete_temp_pdf
 from scripts.result_parser import extract_metrics
 from scripts.ai_summary import generate_summary
-from scripts.table_parser import extract_tables, table_to_dictionary
+from scripts.table_parser import (
+    extract_tables,
+    table_to_dictionary,
+    get_financial_tables,
+)
 from scripts.smart_mapper import normalize_dictionary
 from scripts.financial_mapper import map_financial_data
 from scripts.trend_analyzer import analyze_trends
@@ -62,14 +66,22 @@ def analyze_pdf(pdf_url):
 
             tables = extract_tables(pdf_path)
 
-            if tables:
+            # Keep only Financial Tables
+            financial_tables = get_financial_tables(tables)
 
-                financial_data = table_to_dictionary(tables[0])
+            if financial_tables:
+
+                best_table = financial_tables[0]
+
+                financial_data = table_to_dictionary(best_table)
 
                 financial_data = normalize_dictionary(financial_data)
 
-                # Table Based Financial Mapping
                 mapped_financials = map_financial_data(financial_data)
+
+            else:
+
+                print("No Financial Table Found")
 
         except Exception as e:
 
