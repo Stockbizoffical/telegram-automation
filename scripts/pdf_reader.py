@@ -1,6 +1,7 @@
 import os
 import tempfile
 
+import fitz
 import pdfplumber
 import requests
 
@@ -13,12 +14,8 @@ HEADERS = {
 def process_pdf(pdf_url):
     """
     Download PDF
-    Extract Text
-    Return:
-        {
-            "text": "...",
-            "pdf_path": "..."
-        }
+    Extract Text using PyMuPDF
+    Fallback to pdfplumber
     """
 
     if not pdf_url:
@@ -34,8 +31,6 @@ def process_pdf(pdf_url):
             headers=HEADERS,
             timeout=30
         )
-
-        print(f"🌐 Status Code : {response.status_code}")
 
         response.raise_for_status()
 
@@ -53,27 +48,51 @@ def process_pdf(pdf_url):
 
         text = ""
 
-        with pdfplumber.open(pdf_path) as pdf:
+        # ==========================
+        # Primary : PyMuPDF
+        # ==========================
 
-            print(f"📑 Total Pages : {len(pdf.pages)}")
+        try:
 
-            for page in pdf.pages:
+            doc = fitz.open(pdf_path)
 
-                page_text = page.extract_text()
+            print(f"📑 Total Pages : {len(doc)}")
+
+            for page in doc:
+
+                page_text = page.get_text("text")
 
                 if page_text:
                     text += page_text + "\n"
 
-        if not text.strip():
+            doc.close()
 
-            print("⚠️ No text found inside PDF.")
+            print(f"✅ PyMuPDF Extracted Characters : {len(text)}")
 
-            return {
-                "text": "",
-                "pdf_path": pdf_path
-            }
+        except Exception as e:
 
-        print(f"✅ Extracted Characters : {len(text)}")
+            print("PyMuPDF Error :", e)
+
+        # ==========================
+        # Fallback : pdfplumber
+        # ==========================
+
+        if len(text.strip()) < 100:
+
+            print("⚠️ Falling back to pdfplumber...")
+
+            text = ""
+
+            with pdfplumber.open(pdf_path) as pdf:
+
+                for page in pdf.pages:
+
+                    page_text = page.extract_text()
+
+                    if page_text:
+                        text += page_text + "\n"
+
+            print(f"✅ pdfplumber Extracted Characters : {len(text)}")
 
         return {
             "text": text,
@@ -81,21 +100,21 @@ def process_pdf(pdf_url):
         }
 
     except requests.exceptions.HTTPError as e:
-        print(f"❌ HTTP Error : {e}")
+
+        print("❌ HTTP Error :", e)
 
     except requests.exceptions.RequestException as e:
-        print(f"❌ Download Error : {e}")
+
+        print("❌ Download Error :", e)
 
     except Exception as e:
-        print(f"❌ PDF Reader Error : {e}")
+
+        print("❌ PDF Reader Error :", e)
 
     return None
 
 
 def delete_temp_pdf(pdf_path):
-    """
-    Delete Temporary PDF
-    """
 
     try:
 
@@ -107,4 +126,4 @@ def delete_temp_pdf(pdf_path):
 
     except Exception as e:
 
-        print(f"Delete Error : {e}")
+        print("Delete Error :", e)
