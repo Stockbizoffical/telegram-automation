@@ -1,59 +1,54 @@
 """
 Stock Biz AI
-Growth Calculator V3
+Growth Calculator V4
 """
 
 
 def calculate_growth(financials):
     """
-    Calculate Current, Previous and Growth %
+    Calculate Growth %
+    Returns Flat Dictionary
     """
 
     result = {}
 
     metrics = {
-        "Revenue": "revenue",
-        "PAT": "pat",
-        "EBITDA": "ebitda",
-        "EPS": "eps"
+        "revenue": "Revenue",
+        "pat": "PAT",
+        "ebitda": "EBITDA",
+        "eps": "EPS"
     }
 
-    for name, key in metrics.items():
+    for key, title in metrics.items():
 
         current = financials.get(f"{key}_current")
         previous = financials.get(f"{key}_previous")
 
-        # Convert to float if possible
         try:
-            current = float(current) if current is not None else None
-        except Exception:
+            current = float(current) if current not in (None, "") else None
+        except:
             current = None
 
         try:
-            previous = float(previous) if previous is not None else None
-        except Exception:
+            previous = float(previous) if previous not in (None, "") else None
+        except:
             previous = None
 
         growth = None
 
         if current is not None and previous not in (None, 0):
 
-            try:
-                growth = round(
-                    ((current - previous) / abs(previous)) * 100,
-                    2
-                )
-            except Exception:
-                growth = None
+            growth = round(
+                ((current - previous) / abs(previous)) * 100,
+                2
+            )
 
-        result[name] = {
-            "current": current,
-            "previous": previous,
-            "growth": growth
-        }
+        result[f"{key}_current"] = current
+        result[f"{key}_previous"] = previous
+        result[f"{key}_growth"] = growth
 
     print("=" * 80)
-    print("Growth Calculator")
+    print("Growth Calculator V4")
     print(result)
     print("=" * 80)
 
