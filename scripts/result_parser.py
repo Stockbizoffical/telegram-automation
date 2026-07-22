@@ -1,6 +1,20 @@
 import re
 
 
+def clean_number(value):
+
+    if not value:
+        return None
+
+    return (
+        str(value)
+        .replace(",", "")
+        .replace("₹", "")
+        .replace("Rs.", "")
+        .strip()
+    )
+
+
 def extract_metrics(text):
 
     data = {}
@@ -8,14 +22,16 @@ def extract_metrics(text):
     patterns = {
 
         "Revenue": [
+            r"Revenue\s+from\s+Operations.*?([\d,]+\.\d+|[\d,]+)",
             r"Revenue.*?([\d,]+\.\d+|[\d,]+)",
-            r"Total Income.*?([\d,]+\.\d+|[\d,]+)",
-            r"Income from Operations.*?([\d,]+\.\d+|[\d,]+)"
+            r"Total\s+Income.*?([\d,]+\.\d+|[\d,]+)",
+            r"Income\s+from\s+Operations.*?([\d,]+\.\d+|[\d,]+)"
         ],
 
         "PAT": [
-            r"Profit After Tax.*?([\d,]+\.\d+|[\d,]+)",
-            r"Net Profit.*?([\d,]+\.\d+|[\d,]+)"
+            r"Profit\s+After\s+Tax.*?([\d,]+\.\d+|[\d,]+)",
+            r"Net\s+Profit.*?([\d,]+\.\d+|[\d,]+)",
+            r"Profit\s+for\s+the\s+Period.*?([\d,]+\.\d+|[\d,]+)"
         ],
 
         "EBITDA": [
@@ -23,20 +39,34 @@ def extract_metrics(text):
         ],
 
         "EPS": [
-            r"EPS.*?([\d,]+\.\d+|[\d,]+)",
-            r"Earnings Per Share.*?([\d,]+\.\d+|[\d,]+)"
+            r"Earnings\s+Per\s+Share.*?([\d,]+\.\d+|[\d,]+)",
+            r"EPS.*?([\d,]+\.\d+|[\d,]+)"
         ]
     }
 
-    for key, regex_list in patterns.items():
+    for metric, regex_list in patterns.items():
+
+        data[metric] = None
 
         for regex in regex_list:
 
-            match = re.search(regex, text, re.I | re.S)
+            match = re.search(
+                regex,
+                text,
+                re.IGNORECASE | re.DOTALL
+            )
 
             if match:
 
-                data[key] = match.group(1)
+                data[metric] = clean_number(
+                    match.group(1)
+                )
+
                 break
+
+    print("=" * 80)
+    print("EXTRACT METRICS")
+    print(data)
+    print("=" * 80)
 
     return data
