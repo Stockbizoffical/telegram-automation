@@ -47,8 +47,26 @@ def get_bse_announcements():
 
         data = r.json()
 
-        print("JSON KEYS:", data.keys())
+        print("\nJSON KEYS")
+        print("=" * 60)
+        print(list(data.keys()))
+        print("=" * 60)
 
+        # Print Table1 (if available)
+        if "Table1" in data:
+
+            print("\nTABLE1")
+            print("=" * 60)
+
+            if data["Table1"]:
+                for item in data["Table1"]:
+                    print(item)
+            else:
+                print("Table1 is Empty")
+
+            print("=" * 60)
+
+        # Print First Announcement
         if "Table" in data and data["Table"]:
 
             print("TOTAL RECORDS:", len(data["Table"]))
