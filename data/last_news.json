@@ -1,37 +1,5 @@
 {
     "bse": {
-        "last_news_id": "635bfdaa-af20-4047-95d8-e58ffba6d03b",
-        "processed_news": [
-            "635bfdaa-af20-4047-95d8-e58ffba6d03b",
-            "b06bec44-8292-4d6c-9ae9-34ea1f69ed99",
-            "1f2a813a-f248-4ac7-9790-f27cf328cf95",
-            "6077df02-640c-46b9-87ad-34f0511c4a81",
-            "d6e2a7d7-e3a3-42e4-92a6-9376a4e2247f",
-            "564a331b-dd16-4411-bd79-d2bfe7d32e0e",
-            "ffb189e1-1141-45ba-986f-076d1d0f21be",
-            "d351e6e6-be64-4ed5-9716-cde7dba560a9",
-            "41b665b2-da99-4bc1-b25e-b46755f48386"
-        ]
-    },
-    "nse": {
-        "last_news_id": ""
-    },
-    "financial_results": {
-        "last_news_id": ""
-    },
-    "dividend": {
-        "last_news_id": ""
-    },
-    "bonus": {
-        "last_news_id": ""
-    },
-    "split": {
-        "last_news_id": ""
-    },
-    "board_meeting": {
-        "last_news_id": ""
-    },
-    "bulk_deal": {
-        "last_news_id": ""
+        "processed_news": []
     }
 }
