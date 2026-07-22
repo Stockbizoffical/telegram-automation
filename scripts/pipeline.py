@@ -2,14 +2,13 @@
 Stock Biz AI
 Pipeline Module
 """
-
 from scripts.pdf_reader import process_pdf, delete_temp_pdf
 from scripts.result_parser import extract_metrics
 from scripts.ai_summary import generate_summary
 from scripts.table_parser import extract_tables, table_to_dictionary
 from scripts.smart_mapper import normalize_dictionary
 from scripts.trend_analyzer import analyze_trends
-
+from scripts.quality_analyzer import analyze_quality
 
 def analyze_pdf(pdf_url):
     """
@@ -49,8 +48,11 @@ def analyze_pdf(pdf_url):
 
             print(f"Table Parser Error: {e}")
 
-    # Analyze Financial Trends
+        # Analyze Financial Trends
     trend = analyze_trends(financial_data)
+
+    # Analyze Result Quality
+    quality = analyze_quality(trend)
 
     # Delete Temporary PDF
     delete_temp_pdf(pdf_path)
@@ -63,6 +65,21 @@ def analyze_pdf(pdf_url):
 
         "trend": trend,
 
+        "quality": quality,
+
         "ai": ai
 
     }
+    return {
+
+    "metrics": metrics,
+
+    "financial_data": financial_data,
+
+    "trend": trend,
+
+    "quality": quality,
+
+    "ai": ai
+
+}
