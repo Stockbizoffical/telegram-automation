@@ -217,7 +217,9 @@ def format_bse_announcement(data):
 """
 
     return message.strip()
-    def format_ai_analysis(company, analysis):
+
+
+def format_ai_analysis(company, analysis):
     """
     Format AI Financial Analysis
     """
@@ -335,8 +337,9 @@ def format_bse_announcement(data):
             if item:
                 message += f"• {escape(str(item))}\n"
 
-        message += "\n"
-            remarks = quality.get("remarks", [])
+                message += "\n"
+
+    remarks = quality.get("remarks", [])
 
     if remarks:
 
