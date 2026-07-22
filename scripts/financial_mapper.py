@@ -4,43 +4,6 @@ Financial Mapper
 """
 
 
-KEYWORDS = {
-
-    "revenue": [
-        "revenue",
-        "revenue from operations",
-        "total income",
-        "income"
-    ],
-
-    "ebitda": [
-        "ebitda",
-        "operating profit"
-    ],
-
-    "pat": [
-        "profit after tax",
-        "net profit",
-        "profit for the period"
-    ],
-
-    "eps": [
-        "eps",
-        "earning per share",
-        "earnings per share"
-    ]
-
-}
-
-
-def normalize(text):
-
-    if text is None:
-        return ""
-
-    return str(text).strip().lower()
-
-
 def map_financial_data(financial_data):
 
     result = {}
@@ -48,39 +11,40 @@ def map_financial_data(financial_data):
     if not financial_data:
         return result
 
-    for metric, aliases in KEYWORDS.items():
+    mapping = {
+        "Revenue": "revenue",
+        "PAT": "pat",
+        "EBITDA": "ebitda",
+        "EPS": "eps"
+    }
 
-        for alias in aliases:
+    for key, value in financial_data.items():
 
-            for row_name, row_value in financial_data.items():
+        if key not in mapping:
+            continue
 
-                if alias in normalize(row_name):
+        prefix = mapping[key]
 
-                    if isinstance(row_value, dict):
+        if isinstance(value, dict):
 
-                        result[f"{metric}_current"] = row_value.get(
-                            "Current"
-                        )
+            result[f"{prefix}_current"] = value.get("Current")
+            result[f"{prefix}_previous"] = value.get("Previous")
 
-                        result[f"{metric}_previous"] = row_value.get(
-                            "Previous"
-                        )
+        elif isinstance(value, list):
 
-                    elif isinstance(row_value, list):
+            if len(value) > 0:
+                result[f"{prefix}_current"] = value[0]
 
-                        if len(row_value) > 0:
-                            result[f"{metric}_current"] = row_value[0]
+            if len(value) > 1:
+                result[f"{prefix}_previous"] = value[-1]
 
-                        if len(row_value) > 1:
-                            result[f"{metric}_previous"] = row_value[1]
+        else:
 
-                    else:
+            result[f"{prefix}_current"] = value
 
-                        result[f"{metric}_current"] = row_value
-
-                    break
-
-            if f"{metric}_current" in result:
-                break
+    print("=" * 80)
+    print("FINANCIAL MAPPER")
+    print(result)
+    print("=" * 80)
 
     return result
