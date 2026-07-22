@@ -3,16 +3,25 @@ Stock Biz AI
 Telegram Sender
 """
 
+import os
 import time
 import requests
 
-from config import BOT_TOKEN, CHANNEL_ID
 from scripts.logger import (
     info,
     warning,
     error,
     success,
 )
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHANNEL_ID = os.getenv("CHANNEL_ID")
+
+if not BOT_TOKEN:
+    raise ValueError("BOT_TOKEN environment variable is missing.")
+
+if not CHANNEL_ID:
+    raise ValueError("CHANNEL_ID environment variable is missing.")
 
 API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
@@ -78,16 +87,12 @@ def send_message(message):
                     timeout=20
                 )
 
-                # Success
                 if response.status_code == 200:
 
                     success("Telegram Message Sent")
-
                     success_flag = True
-
                     break
 
-                # Too Many Requests
                 elif response.status_code == 429:
 
                     retry = response.json().get(
@@ -117,19 +122,16 @@ def send_message(message):
             except requests.exceptions.Timeout:
 
                 warning("Telegram Timeout")
-
                 time.sleep(2)
 
             except requests.exceptions.ConnectionError:
 
                 warning("Network Error")
-
                 time.sleep(2)
 
             except Exception as e:
 
                 error(str(e))
-
                 time.sleep(2)
 
         if not success_flag:
