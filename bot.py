@@ -1,9 +1,13 @@
 from scripts.bse import get_bse_announcements
 from scripts.telegram import send_message
 from scripts.storage import save_news
-from scripts.formatter import format_bse_announcement
+from scripts.formatter import (
+    format_bse_announcement,
+    format_ai_analysis
+)
 from scripts.engine import get_valid_announcements
 from scripts.logger import log
+from scripts.pipeline import analyze_pdf
 
 SOURCE = "bse"
 
@@ -27,16 +31,32 @@ if not announcements:
 for announcement in announcements:
 
     news_id = announcement.get("NEWSID", "")
+    company = announcement.get("SLONGNAME", "")
 
     try:
 
-        message = format_bse_announcement(announcement)
+        # PDF Link
+        pdf_url = announcement.get("ATTACHMENTNAME", "")
+
+        if pdf_url:
+
+            analysis = analyze_pdf(pdf_url)
+
+            if analysis:
+
+                message = format_ai_analysis(company, analysis)
+
+            else:
+
+                message = format_bse_announcement(announcement)
+
+        else:
+
+            message = format_bse_announcement(announcement)
 
         send_message(message)
 
         save_news(SOURCE, news_id)
-
-        company = announcement.get("SLONGNAME", "")
 
         print(f"✅ Sent : {company}")
 
