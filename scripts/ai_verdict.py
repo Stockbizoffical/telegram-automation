@@ -35,7 +35,7 @@ def generate_verdict(growth, score):
             strengths.append("Healthy Revenue Growth")
 
         elif revenue >= 0:
-            remarks.append("Revenue improved marginally.")
+            remarks.append("Revenue recorded stable growth.")
 
         else:
             remarks.append("Revenue declined during the quarter.")
@@ -47,7 +47,7 @@ def generate_verdict(growth, score):
 
     if pat is not None:
 
-        if pat >= 25:
+        if pat >= 20:
             remarks.append("Net profit improved significantly.")
             strengths.append("Strong Profit Growth")
 
@@ -56,7 +56,7 @@ def generate_verdict(growth, score):
             strengths.append("Healthy Profit Growth")
 
         elif pat >= 0:
-            remarks.append("Net profit improved slightly.")
+            remarks.append("Net profit remained stable.")
 
         else:
             remarks.append("Profit after tax declined.")
@@ -68,7 +68,7 @@ def generate_verdict(growth, score):
 
     if ebitda is not None:
 
-        if ebitda >= 15:
+        if ebitda >= 20:
             remarks.append("Operating performance remained strong.")
             strengths.append("Healthy EBITDA")
 
@@ -85,12 +85,12 @@ def generate_verdict(growth, score):
 
     if eps is not None:
 
-        if eps >= 15:
+        if eps >= 20:
             remarks.append("EPS growth remained strong.")
             strengths.append("Strong EPS Growth")
 
         elif eps >= 0:
-            remarks.append("EPS improved during the quarter.")
+            remarks.append("EPS remained stable.")
 
         else:
             remarks.append("EPS declined.")
@@ -127,42 +127,49 @@ def generate_verdict(growth, score):
             strengths.append("Good Cost Management")
 
     # ----------------------------
-    # AI Verdict
+    # Financial Strength
     # ----------------------------
 
     if ai_score >= 90:
 
         verdict = "Excellent Quarterly Performance"
-        signal = "STRONG BUY"
-        investment = "Positive"
-        risk = "Low"
+        signal = "Excellent"
+        investment = "Very Positive"
+        risk = "Very Low"
 
     elif ai_score >= 75:
 
         verdict = "Strong Quarterly Performance"
-        signal = "BUY"
+        signal = "Strong"
         investment = "Positive"
         risk = "Low"
 
     elif ai_score >= 60:
 
-        verdict = "Average Quarterly Performance"
-        signal = "HOLD"
-        investment = "Neutral"
-        risk = "Medium"
+        verdict = "Good Quarterly Performance"
+        signal = "Good"
+        investment = "Positive"
+        risk = "Moderate"
 
     elif ai_score >= 40:
 
+        verdict = "Average Quarterly Performance"
+        signal = "Average"
+        investment = "Neutral"
+        risk = "Moderate"
+
+    elif ai_score >= 20:
+
         verdict = "Weak Quarterly Performance"
-        signal = "SELL"
-        investment = "Negative"
+        signal = "Weak"
+        investment = "Cautious"
         risk = "High"
 
     else:
 
-        verdict = "Poor Quarterly Performance"
-        signal = "STRONG SELL"
-        investment = "Avoid"
+        verdict = "Very Weak Quarterly Performance"
+        signal = "Very Weak"
+        investment = "High Risk"
         risk = "Very High"
 
     return {
