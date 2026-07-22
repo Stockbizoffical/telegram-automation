@@ -9,64 +9,71 @@ from scripts.pipeline import analyze_pdf
 def run_test(pdf_url):
 
     print("=" * 60)
-    print("Stock Biz AI Test")
+    print("🚀 Stock Biz AI - Pipeline Test")
     print("=" * 60)
 
-    result = analyze_pdf(pdf_url)
+    try:
+        result = analyze_pdf(pdf_url)
 
-    if not result:
-        print("❌ Pipeline Failed")
+    except Exception as e:
+        print(f"\n❌ Pipeline Error: {e}")
         return
 
-    print("✅ Pipeline Executed")
+    if not result:
+        print("\n❌ Pipeline Failed")
+        return
+
+    print("\n✅ Pipeline Executed Successfully\n")
 
     tests = {
-
         "Metrics": result.get("metrics"),
-
-        "Financials": result.get("financials"),
-
+        "Regex Financials": result.get("regex_financials"),
+        "Table Financials": result.get("table_financials"),
+        "Merged Financials": result.get("financials"),
         "Growth": result.get("growth"),
-
+        "Trend": result.get("trend"),
+        "Quality": result.get("quality"),
         "Score": result.get("score"),
-
         "AI Engine": result.get("ai_engine"),
-
     }
-
-    print()
 
     passed = 0
     total = len(tests)
 
-    for name, value in tests:
+    print("-" * 60)
+
+    for name, value in tests.items():
 
         if value:
-
             print(f"✅ {name}")
-
             passed += 1
-
         else:
-
             print(f"❌ {name}")
 
-    print()
+    print("-" * 60)
 
-    print("=" * 60)
+    accuracy = round((passed / total) * 100, 2)
 
-    accuracy = round(
-        (passed / total) * 100,
-        2
-    )
+    print(f"\n📊 Passed      : {passed}/{total}")
+    print(f"🎯 Accuracy    : {accuracy}%")
 
-    print(f"Overall : {accuracy}%")
+    if accuracy >= 90:
+        print("🟢 Status      : Excellent")
+    elif accuracy >= 75:
+        print("🟡 Status      : Good")
+    elif accuracy >= 50:
+        print("🟠 Status      : Needs Improvement")
+    else:
+        print("🔴 Status      : Critical")
 
     print("=" * 60)
 
 
 if __name__ == "__main__":
 
-    pdf = input("Enter PDF URL : ")
+    pdf_url = input("Enter PDF URL: ").strip()
 
-    run_test(pdf)
+    if not pdf_url:
+        print("❌ PDF URL is required.")
+    else:
+        run_test(pdf_url)
