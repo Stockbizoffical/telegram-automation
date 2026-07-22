@@ -1,12 +1,15 @@
 """
 Stock Biz AI
-Table Parser
+Advanced Table Parser
 """
 
 import pdfplumber
 
 
 def extract_tables(pdf_path):
+    """
+    Extract all tables from PDF
+    """
 
     all_tables = []
 
@@ -20,35 +23,89 @@ def extract_tables(pdf_path):
 
                 if tables:
 
-                    for table in tables:
-
-                        if table:
-                            all_tables.append(table)
+                    all_tables.extend(tables)
 
     except Exception as e:
 
-        print(f"Table Parser Error: {e}")
+        print(f"Table Extraction Error : {e}")
 
     return all_tables
 
 
 def table_to_dictionary(table):
+    """
+    Convert Table into Dictionary
+    """
 
-    result = {}
+    data = {}
 
-    if len(table) < 2:
-        return result
+    if not table:
+        return data
 
-    for row in table[1:]:
+    for row in table:
 
-        if not row or len(row) < 3:
+        if not row:
             continue
 
-        key = str(row[0]).strip()
+        row = [str(x).strip() if x else "" for x in row]
 
-        result[key] = {
-            "Current": row[1],
-            "Previous": row[2]
-        }
+        key = row[0]
 
-    return result
+        if not key:
+            continue
+
+        values = row[1:]
+
+        data[key] = values
+
+    return data
+
+
+def get_financial_tables(tables):
+    """
+    Return only financial tables
+    """
+
+    financial_tables = []
+
+    keywords = [
+
+        "income",
+
+        "revenue",
+
+        "sales",
+
+        "profit",
+
+        "expense",
+
+        "ebitda",
+
+        "eps",
+
+        "operations",
+
+        "tax"
+
+    ]
+
+    for table in tables:
+
+        text = " ".join(
+
+            str(cell).lower()
+
+            for row in table
+
+            for cell in row
+
+            if cell
+
+        )
+
+        if any(word in text for word in keywords):
+
+            financial_tables.append(table)
+
+    return financial_tables
