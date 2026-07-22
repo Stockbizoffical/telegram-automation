@@ -1,3 +1,8 @@
+"""
+Stock Biz AI
+Table Parser
+"""
+
 import pdfplumber
 
 
@@ -18,15 +23,16 @@ def extract_tables(pdf_path):
                     for table in tables:
 
                         if table:
-
                             all_tables.append(table)
 
     except Exception as e:
 
-        print(f"Table Parser Error : {e}")
+        print(f"Table Parser Error: {e}")
 
     return all_tables
-  def table_to_dictionary(table):
+
+
+def table_to_dictionary(table):
 
     result = {}
 
@@ -35,16 +41,14 @@ def extract_tables(pdf_path):
 
     for row in table[1:]:
 
-        if len(row) >= 3:
+        if not row or len(row) < 3:
+            continue
 
-            key = str(row[0]).strip()
+        key = str(row[0]).strip()
 
-            result[key] = {
-
-                "Current": row[1],
-
-                "Previous": row[2]
-
-            }
+        result[key] = {
+            "Current": row[1],
+            "Previous": row[2]
+        }
 
     return result
