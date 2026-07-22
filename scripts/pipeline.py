@@ -18,7 +18,7 @@ from scripts.quality_analyzer import analyze_quality
 from scripts.result_pdf_parser import parse_financial_result
 from scripts.growth_calculator import calculate_growth
 from scripts.financial_score import calculate_financial_score
-from scripts.ai_verdict import generate_verdict
+from scripts.ai_engine import build_ai_engine
 
 
 def analyze_pdf(pdf_url):
@@ -112,11 +112,15 @@ def analyze_pdf(pdf_url):
         )
 
         # ---------------------------------
-        # AI Verdict
+        # Master AI Engine
         # ---------------------------------
-        verdict = generate_verdict(
-            growth,
-            score
+        ai_engine = build_ai_engine(
+            metrics=metrics,
+            financials=financials,
+            growth=growth,
+            trend=trend,
+            quality=quality,
+            score=score
         )
 
         # ---------------------------------
@@ -140,7 +144,7 @@ def analyze_pdf(pdf_url):
 
             "score": score,
 
-            "verdict": verdict,
+            "ai_engine": ai_engine,
 
             "ai": ai
 
