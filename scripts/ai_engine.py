@@ -39,7 +39,10 @@ def build_ai_engine(
 
         "confidence": confidence,
 
-        "signal": score.get("signal", "HOLD"),
+        "signal": verdict.get(
+    "signal",
+    score.get("signal", "HOLD")
+),
 
         "verdict": verdict.get("verdict", "Neutral"),
 
