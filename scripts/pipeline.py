@@ -2,6 +2,7 @@
 Stock Biz AI
 Pipeline Module
 """
+
 from scripts.pdf_reader import process_pdf, delete_temp_pdf
 from scripts.result_parser import extract_metrics
 from scripts.ai_summary import generate_summary
@@ -10,6 +11,7 @@ from scripts.smart_mapper import normalize_dictionary
 from scripts.trend_analyzer import analyze_trends
 from scripts.quality_analyzer import analyze_quality
 from scripts.result_pdf_parser import parse_financial_result
+
 
 def analyze_pdf(pdf_url):
     """
@@ -25,50 +27,69 @@ def analyze_pdf(pdf_url):
     text = pdf["text"]
     pdf_path = pdf["pdf_path"]
 
-    # Extract Metrics
-    metrics = extract_metrics(text)
+    try:
 
-    # Generate AI Summary
-    ai = generate_summary(metrics)
+        # -----------------------------
+        # Extract Financial Metrics
+        # -----------------------------
+        metrics = extract_metrics(text)
 
-    # Extract Financial Tables
-    tables = extract_tables(pdf_path)
+        # -----------------------------
+        # Parse Financial Results
+        # -----------------------------
+        financials = parse_financial_result(text)
 
-    financial_data = {}
+        # -----------------------------
+        # Generate AI Summary
+        # -----------------------------
+        ai = generate_summary(metrics)
 
-    if tables:
+        # -----------------------------
+        # Extract Tables
+        # -----------------------------
+        tables = extract_tables(pdf_path)
 
-        try:
+        financial_data = {}
 
-            financial_data = table_to_dictionary(tables[0])
+        if tables:
 
-            # Normalize Financial Keys
-            financial_data = normalize_dictionary(financial_data)
+            try:
 
-        except Exception as e:
+                financial_data = table_to_dictionary(tables[0])
 
-            print(f"Table Parser Error: {e}")
+                financial_data = normalize_dictionary(financial_data)
 
-        # Analyze Financial Trends
-    trend = analyze_trends(financial_data)
+            except Exception as e:
 
-    # Analyze Result Quality
-    quality = analyze_quality(trend)
+                print(f"Table Parser Error : {e}")
 
-    # Delete Temporary PDF
-    delete_temp_pdf(pdf_path)
+        # -----------------------------
+        # Trend Analysis
+        # -----------------------------
+        trend = analyze_trends(financial_data)
 
-    return {
+        # -----------------------------
+        # Quality Analysis
+        # -----------------------------
+        quality = analyze_quality(trend)
 
-        "metrics": metrics,
+        return {
 
-        "financial_data": financial_data,
+            "metrics": metrics,
 
-        "trend": trend,
+            "financials": financials,
 
-        "quality": quality,
+            "financial_data": financial_data,
 
-        "ai": ai
+            "trend": trend,
 
-    }
-    
+            "quality": quality,
+
+            "ai": ai
+
+        }
+
+    finally:
+
+        # Delete Temporary PDF
+        delete_temp_pdf(pdf_path)
