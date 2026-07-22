@@ -6,7 +6,14 @@ from scripts.formatter import (
     format_ai_analysis,
 )
 from scripts.engine import get_valid_announcements
-from scripts.logger import log
+from scripts.logger import (
+    info,
+    warning,
+    error,
+    success,
+    ai,
+    result,
+)
 from scripts.pipeline import analyze_pdf
 from scripts.result_detector import is_financial_result
 from scripts.pdf_url_builder import build_pdf_url
@@ -14,7 +21,7 @@ from scripts.pdf_url_builder import build_pdf_url
 SOURCE = "bse"
 
 print("🚀 Stock Biz AI Bot Started")
-log("Bot Started")
+info("Bot Started")
 
 # ---------------------------------
 # Fetch Announcements
@@ -24,11 +31,11 @@ announcements = get_bse_announcements()
 
 if not announcements:
     print("❌ No announcements found.")
-    log("No announcements found")
+    warning("No announcements found")
     exit()
 
 # ---------------------------------
-# Filter High Priority News
+# Filter High Priority Announcements
 # ---------------------------------
 
 announcements = get_valid_announcements(
@@ -38,11 +45,11 @@ announcements = get_valid_announcements(
 
 if not announcements:
     print("ℹ️ No High Priority Announcements.")
-    log("No High Priority Announcements")
+    info("No High Priority Announcements")
     exit()
 
 # ---------------------------------
-# Process News
+# Process Announcements
 # ---------------------------------
 
 for announcement in announcements:
@@ -50,33 +57,26 @@ for announcement in announcements:
     news_id = announcement.get("NEWSID", "")
     company = announcement.get("SLONGNAME", "Unknown Company")
 
-    log(f"Processing : {company}")
+    info(f"Processing : {company}")
 
     try:
 
-        # Default Message
-        message = format_bse_announcement(
-            announcement
-        )
+        # Default Telegram Message
+        message = format_bse_announcement(announcement)
 
-        attachment = announcement.get(
-            "ATTACHMENTNAME",
-            ""
-        )
+        # Build PDF URL
+        attachment = announcement.get("ATTACHMENTNAME", "")
+        pdf_url = build_pdf_url(attachment)
 
-        pdf_url = build_pdf_url(
-            attachment
-        )
-
-        # ------------------------------
-        # AI Analysis
-        # ------------------------------
+        # ---------------------------------
+        # AI Financial Analysis
+        # ---------------------------------
 
         if pdf_url and is_financial_result(announcement):
 
-            log("Financial Result Detected")
+            result(f"Financial Result Detected : {company}")
 
-            log(f"PDF : {pdf_url}")
+            info(f"PDF URL : {pdf_url}")
 
             analysis = analyze_pdf(pdf_url)
 
@@ -88,40 +88,53 @@ for announcement in announcements:
                 )
 
                 if ai_message:
+
                     message = ai_message
-                    log("AI Formatter Success")
+
+                    ai(f"AI Analysis Completed : {company}")
 
                 else:
-                    log("AI Formatter Returned Empty")
+
+                    warning(
+                        f"AI Formatter Returned Empty : {company}"
+                    )
 
             else:
 
-                log("AI Pipeline Failed")
+                warning(
+                    f"AI Pipeline Failed : {company}"
+                )
 
         else:
 
-            log("Normal Corporate Announcement")
-
-        # ------------------------------
-        # Send Telegram
-        # ------------------------------
-
-        if message:
-
-            send_message(message)
-
-            save_news(
-                SOURCE,
-                news_id
+            info(
+                f"Normal Corporate Announcement : {company}"
             )
 
-            print(f"✅ Sent : {company}")
+        # ---------------------------------
+        # Send Telegram Message
+        # ---------------------------------
 
-            log(f"Sent : {company}")
+        if not message:
 
-        else:
+            warning(
+                f"Empty Message Skipped : {company}"
+            )
 
-            log("Empty Message Skipped")
+            continue
+
+        send_message(message)
+
+        save_news(
+            SOURCE,
+            news_id
+        )
+
+        print(f"✅ Sent : {company}")
+
+        success(
+            f"Telegram Sent : {company}"
+        )
 
     except Exception as e:
 
@@ -129,8 +142,8 @@ for announcement in announcements:
 
         print(e)
 
-        log(f"{company} : {e}")
+        error(f"{company} : {e}")
 
 print("🎉 Bot Finished Successfully")
 
-log("Bot Finished")
+success("Bot Finished")
