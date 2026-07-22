@@ -16,6 +16,10 @@ SOURCE = "bse"
 print("🚀 Stock Biz AI Bot Started")
 log("Bot Started")
 
+# ---------------------------------
+# Fetch Announcements
+# ---------------------------------
+
 announcements = get_bse_announcements()
 
 if not announcements:
@@ -23,64 +27,110 @@ if not announcements:
     log("No announcements found")
     exit()
 
-announcements = get_valid_announcements(announcements, SOURCE)
+# ---------------------------------
+# Filter High Priority News
+# ---------------------------------
+
+announcements = get_valid_announcements(
+    announcements,
+    SOURCE
+)
 
 if not announcements:
     print("ℹ️ No High Priority Announcements.")
     log("No High Priority Announcements")
     exit()
 
+# ---------------------------------
+# Process News
+# ---------------------------------
+
 for announcement in announcements:
 
     news_id = announcement.get("NEWSID", "")
     company = announcement.get("SLONGNAME", "Unknown Company")
 
+    log(f"Processing : {company}")
+
     try:
 
-        # Default Telegram Message
-        message = format_bse_announcement(announcement)
+        # Default Message
+        message = format_bse_announcement(
+            announcement
+        )
 
-        # Attachment File Name
-        attachment_name = announcement.get("ATTACHMENTNAME", "")
+        attachment = announcement.get(
+            "ATTACHMENTNAME",
+            ""
+        )
 
-        # Build Complete PDF URL
-        pdf_url = build_pdf_url(attachment_name)
+        pdf_url = build_pdf_url(
+            attachment
+        )
 
-        # AI Analysis only for Financial Results
+        # ------------------------------
+        # AI Analysis
+        # ------------------------------
+
         if pdf_url and is_financial_result(announcement):
 
-            log(f"Financial Result Detected : {company}")
-            log(f"PDF URL : {pdf_url}")
+            log("Financial Result Detected")
+
+            log(f"PDF : {pdf_url}")
 
             analysis = analyze_pdf(pdf_url)
 
             if analysis:
 
-                message = format_ai_analysis(company, analysis)
+                ai_message = format_ai_analysis(
+                    company,
+                    analysis
+                )
 
-                log(f"AI Analysis Completed : {company}")
+                if ai_message:
+                    message = ai_message
+                    log("AI Formatter Success")
+
+                else:
+                    log("AI Formatter Returned Empty")
 
             else:
 
-                log(f"AI Analysis Failed : {company}")
+                log("AI Pipeline Failed")
 
         else:
 
-            log(f"Normal Announcement : {company}")
+            log("Normal Corporate Announcement")
 
-        # Send Telegram Message
-        send_message(message)
+        # ------------------------------
+        # Send Telegram
+        # ------------------------------
 
-        # Save Duplicate News
-        save_news(SOURCE, news_id)
+        if message:
 
-        print(f"✅ Sent : {company}")
-        log(f"Sent : {company}")
+            send_message(message)
+
+            save_news(
+                SOURCE,
+                news_id
+            )
+
+            print(f"✅ Sent : {company}")
+
+            log(f"Sent : {company}")
+
+        else:
+
+            log("Empty Message Skipped")
 
     except Exception as e:
 
-        print(f"❌ Error : {e}")
-        log(f"Telegram Error : {e}")
+        print(f"❌ Error : {company}")
+
+        print(e)
+
+        log(f"{company} : {e}")
 
 print("🎉 Bot Finished Successfully")
+
 log("Bot Finished")
