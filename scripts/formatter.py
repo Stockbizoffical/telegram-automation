@@ -57,3 +57,50 @@ def format_bse_announcement(data):
 """
 
     return message
+def format_ai_analysis(company, analysis):
+
+    if not analysis:
+        return ""
+
+    trend = analysis.get("trend", {})
+    quality = analysis.get("quality", {})
+    financial = analysis.get("financial_data", {})
+
+    message = f"📊 <b>{company}</b>\n\n"
+
+    message += "📈 <b>Financial Snapshot</b>\n\n"
+
+    for metric in ["Revenue", "PAT", "EBITDA", "EPS"]:
+
+        if metric in financial:
+
+            current = financial[metric].get("Current", "-")
+            growth = trend.get(f"{metric} Growth")
+
+            message += f"<b>{metric}</b>\n"
+
+            message += f"{current}"
+
+            if growth is not None:
+                message += f" ({growth}%)"
+
+            message += "\n\n"
+
+    message += "━━━━━━━━━━━━━━\n\n"
+
+    message += "🤖 <b>AI Analysis</b>\n\n"
+
+    remarks = quality.get("remarks", [])
+
+    for remark in remarks:
+        message += f"{remark}\n"
+
+    message += "\n"
+
+    message += f"⭐ <b>Impact Score</b> : {trend.get('Impact Score', '-')}/100\n\n"
+
+    message += f"🚀 <b>Verdict</b>\n"
+
+    message += quality.get("verdict", "-")
+
+    return message
