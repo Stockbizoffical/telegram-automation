@@ -9,6 +9,7 @@ from scripts.engine import get_valid_announcements
 from scripts.logger import log
 from scripts.pipeline import analyze_pdf
 from scripts.result_detector import is_financial_result
+from scripts.pdf_url_builder import build_pdf_url
 
 SOURCE = "bse"
 
@@ -39,13 +40,17 @@ for announcement in announcements:
         # Default Telegram Message
         message = format_bse_announcement(announcement)
 
-        # PDF File Name
-        pdf_url = str(announcement.get("ATTACHMENTNAME", "")).strip()
+        # Attachment File Name
+        attachment_name = announcement.get("ATTACHMENTNAME", "")
+
+        # Build Complete PDF URL
+        pdf_url = build_pdf_url(attachment_name)
 
         # AI Analysis only for Financial Results
         if pdf_url and is_financial_result(announcement):
 
             log(f"Financial Result Detected : {company}")
+            log(f"PDF URL : {pdf_url}")
 
             analysis = analyze_pdf(pdf_url)
 
@@ -66,7 +71,7 @@ for announcement in announcements:
         # Send Telegram Message
         send_message(message)
 
-        # Save Duplicate
+        # Save Duplicate News
         save_news(SOURCE, news_id)
 
         print(f"✅ Sent : {company}")
