@@ -100,7 +100,7 @@ def get_star(score):
         return "★☆☆☆☆"
 
     except Exception:
-    return "-"
+        return "-"
 
 
 def format_bse_announcement(data):
