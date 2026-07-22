@@ -1,6 +1,9 @@
 {
     "bse": {
-        "last_news_id": "635bfdaa-af20-4047-95d8-e58ffba6d03b"
+        "last_news_id": "635bfdaa-af20-4047-95d8-e58ffba6d03b",
+        "processed_news": [
+            "635bfdaa-af20-4047-95d8-e58ffba6d03b"
+        ]
     },
     "nse": {
         "last_news_id": ""
