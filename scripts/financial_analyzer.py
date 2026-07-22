@@ -33,3 +33,33 @@ def get_rating(growth):
         return "🟠 Flat"
 
     return "🔴 Weak"
+    def calculate_score(result):
+
+    score = 50
+
+    revenue = result.get("Revenue Growth")
+    pat = result.get("PAT Growth")
+    eps = result.get("EPS Growth")
+
+    if revenue is not None:
+
+        if revenue > 15:
+            score += 15
+
+        elif revenue > 5:
+            score += 8
+
+    if pat is not None:
+
+        if pat > 20:
+            score += 20
+
+        elif pat > 10:
+            score += 10
+
+    if eps is not None:
+
+        if eps > 15:
+            score += 10
+
+    return min(score,100)
