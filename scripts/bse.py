@@ -50,31 +50,52 @@ def get_bse_announcements():
 
         print(f"TOTAL ANNOUNCEMENTS : {len(announcements)}")
 
-        # केवल Financial Results Filter करें
         financial_results = []
 
-        keywords = [
+        # Result Keywords
+        include_keywords = [
             "financial result",
             "financial results",
-            "result",
-            "results",
-            "quarter",
-            "quarterly",
-            "audited",
-            "unaudited",
-            "standalone",
-            "consolidated"
+            "quarterly results",
+            "unaudited financial results",
+            "audited financial results",
+            "standalone financial results",
+            "consolidated financial results",
+            "quarter ended",
+            "results"
+        ]
+
+        # Skip Keywords
+        skip_keywords = [
+            "board meeting",
+            "meeting of board",
+            "intimation",
+            "prior intimation",
+            "notice",
+            "closure of trading window",
+            "investor presentation",
+            "analyst meet",
+            "conference call",
+            "earnings call",
+            "press release",
+            "newspaper publication"
         ]
 
         for item in announcements:
 
             text = (
                 str(item.get("HEADLINE", "")) + " " +
+                str(item.get("MORE", "")) + " " +
                 str(item.get("CATEGORYNAME", "")) + " " +
                 str(item.get("SUBCATNAME", ""))
             ).lower()
 
-            if any(keyword in text for keyword in keywords):
+            # Skip unwanted announcements
+            if any(word in text for word in skip_keywords):
+                continue
+
+            # Keep only financial results
+            if any(word in text for word in include_keywords):
                 financial_results.append(item)
 
         print(f"FINANCIAL RESULTS : {len(financial_results)}")
@@ -86,10 +107,14 @@ def get_bse_announcements():
 
             first = financial_results[0]
 
-            for key, value in first.items():
-                print(f"{key} : {value}")
+            print("Company :", first.get("SLONGNAME"))
+            print("Headline :", first.get("HEADLINE"))
+            print("Attachment :", first.get("ATTACHMENTNAME"))
 
             print("=" * 60)
+
+        else:
+            print("❌ No Financial Result Found.")
 
         return financial_results
 
