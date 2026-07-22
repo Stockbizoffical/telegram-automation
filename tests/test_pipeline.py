@@ -79,8 +79,21 @@ def run_test(pdf_url):
 
 if __name__ == "__main__":
 
-    # अभी URL खाली रखें
-    pdf_url = ""
+    announcements = get_bse_announcements()
+
+    if not announcements:
+        print("❌ No Financial Results Found.")
+        exit()
+
+    first = announcements[0]
+
+    pdf_url = get_pdf_url(first)
+
+    if not pdf_url:
+        print("❌ PDF URL Not Found.")
+        exit()
+
+    print(f"\n📄 PDF URL : {pdf_url}\n")
 
     run_test(pdf_url)
 pdf_url = ""
