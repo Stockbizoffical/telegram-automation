@@ -14,8 +14,7 @@ def analyze_quality(trend):
 
     remarks = []
 
-    # Revenue
-
+    # Revenue Analysis
     if revenue is not None:
 
         if revenue >= 15:
@@ -27,8 +26,7 @@ def analyze_quality(trend):
         else:
             remarks.append("🔴 Weak Revenue Growth")
 
-    # PAT
-
+    # PAT Analysis
     if pat is not None:
 
         if pat >= 20:
@@ -40,8 +38,7 @@ def analyze_quality(trend):
         else:
             remarks.append("🔴 Weak Profit Growth")
 
-    # EPS
-
+    # EPS Analysis
     if eps is not None:
 
         if eps >= 15:
@@ -54,7 +51,6 @@ def analyze_quality(trend):
             remarks.append("🔴 EPS Weak")
 
     # Final Verdict
-
     if score >= 90:
         verdict = "🚀 Excellent Quarterly Performance"
 
@@ -68,11 +64,7 @@ def analyze_quality(trend):
         verdict = "🔴 Weak Quarterly Performance"
 
     return {
-
         "remarks": remarks,
-
         "verdict": verdict,
-
         "confidence": score
-
     }
