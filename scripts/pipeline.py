@@ -9,6 +9,7 @@ from scripts.table_parser import extract_tables, table_to_dictionary
 from scripts.smart_mapper import normalize_dictionary
 from scripts.trend_analyzer import analyze_trends
 from scripts.quality_analyzer import analyze_quality
+from scripts.result_pdf_parser import parse_financial_result
 
 def analyze_pdf(pdf_url):
     """
