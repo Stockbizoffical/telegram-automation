@@ -3,6 +3,8 @@ import os
 
 FILE_PATH = "data/last_news.json"
 
+MAX_NEWS_IDS = 1000
+
 
 def load_data():
     if not os.path.exists(FILE_PATH):
@@ -17,17 +19,34 @@ def save_data(data):
         json.dump(data, f, indent=4)
 
 
-def get_last_news(source):
+def get_processed_news(source):
+
     data = load_data()
-    return data.get(source, {}).get("last_news_id", "")
+
+    return data.get(source, {}).get("processed_news", [])
 
 
-def save_last_news(source, news_id):
+def is_duplicate(source, news_id):
+
+    processed = get_processed_news(source)
+
+    return news_id in processed
+
+
+def save_news(source, news_id):
+
     data = load_data()
 
     if source not in data:
         data[source] = {}
 
-    data[source]["last_news_id"] = news_id
+    processed = data[source].get("processed_news", [])
+
+    processed.append(news_id)
+
+    # केवल अंतिम 1000 News IDs रखें
+    processed = processed[-MAX_NEWS_IDS:]
+
+    data[source]["processed_news"] = processed
 
     save_data(data)
