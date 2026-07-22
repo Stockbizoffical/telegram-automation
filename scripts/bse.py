@@ -12,6 +12,7 @@ HEADERS = {
 
 
 def get_bse_announcements():
+
     today = datetime.now().strftime("%Y%m%d")
 
     params = {
@@ -27,7 +28,7 @@ def get_bse_announcements():
 
     try:
 
-        r = requests.get(
+        response = requests.get(
             URL,
             headers=HEADERS,
             params=params,
@@ -35,57 +36,64 @@ def get_bse_announcements():
         )
 
         print("=" * 60)
-        print("STATUS CODE:", r.status_code)
-        print("REQUEST URL:", r.url)
-        print("=" * 60)
-        print("RESPONSE:")
-        print(r.text[:2000])
+        print("STATUS CODE :", response.status_code)
+        print("REQUEST URL :", response.url)
         print("=" * 60)
 
-        if r.status_code != 200:
+        if response.status_code != 200:
+            print("❌ Failed to fetch announcements.")
             return []
 
-        data = r.json()
+        data = response.json()
 
-        print("\nJSON KEYS")
-        print("=" * 60)
-        print(list(data.keys()))
-        print("=" * 60)
+        announcements = data.get("Table", [])
 
-        # Print Table1 (if available)
-        if "Table1" in data:
+        print(f"TOTAL ANNOUNCEMENTS : {len(announcements)}")
 
-            print("\nTABLE1")
+        # केवल Financial Results Filter करें
+        financial_results = []
+
+        keywords = [
+            "financial result",
+            "financial results",
+            "result",
+            "results",
+            "quarter",
+            "quarterly",
+            "audited",
+            "unaudited",
+            "standalone",
+            "consolidated"
+        ]
+
+        for item in announcements:
+
+            text = (
+                str(item.get("HEADLINE", "")) + " " +
+                str(item.get("CATEGORYNAME", "")) + " " +
+                str(item.get("SUBCATNAME", ""))
+            ).lower()
+
+            if any(keyword in text for keyword in keywords):
+                financial_results.append(item)
+
+        print(f"FINANCIAL RESULTS : {len(financial_results)}")
+
+        if financial_results:
+
+            print("\nFIRST FINANCIAL RESULT")
             print("=" * 60)
 
-            if data["Table1"]:
-                for item in data["Table1"]:
-                    print(item)
-            else:
-                print("Table1 is Empty")
-
-            print("=" * 60)
-
-        # Print First Announcement
-        if "Table" in data and data["Table"]:
-
-            print("TOTAL RECORDS:", len(data["Table"]))
-
-            print("\nFIRST ANNOUNCEMENT")
-            print("=" * 60)
-
-            first = data["Table"][0]
+            first = financial_results[0]
 
             for key, value in first.items():
                 print(f"{key} : {value}")
 
             print("=" * 60)
 
-            return data["Table"]
-
-        return []
+        return financial_results
 
     except Exception as e:
 
-        print("ERROR:", str(e))
+        print(f"❌ ERROR : {e}")
         return []
