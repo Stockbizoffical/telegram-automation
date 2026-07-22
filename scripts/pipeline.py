@@ -1,3 +1,16 @@
+"""
+Stock Biz AI
+Pipeline Module
+"""
+
+from scripts.pdf_reader import process_pdf, delete_temp_pdf
+from scripts.result_parser import extract_metrics
+from scripts.ai_summary import generate_summary
+from scripts.table_parser import extract_tables, table_to_dictionary
+from scripts.smart_mapper import normalize_dictionary
+from scripts.trend_analyzer import analyze_trends
+
+
 def analyze_pdf(pdf_url):
     """
     Complete PDF Analysis Pipeline
@@ -15,7 +28,7 @@ def analyze_pdf(pdf_url):
     # Extract Metrics
     metrics = extract_metrics(text)
 
-    # AI Summary
+    # Generate AI Summary
     ai = generate_summary(metrics)
 
     # Extract Financial Tables
@@ -36,6 +49,9 @@ def analyze_pdf(pdf_url):
 
             print(f"Table Parser Error: {e}")
 
+    # Analyze Financial Trends
+    trend = analyze_trends(financial_data)
+
     # Delete Temporary PDF
     delete_temp_pdf(pdf_path)
 
@@ -44,6 +60,8 @@ def analyze_pdf(pdf_url):
         "metrics": metrics,
 
         "financial_data": financial_data,
+
+        "trend": trend,
 
         "ai": ai
 
