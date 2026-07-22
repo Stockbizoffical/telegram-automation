@@ -1,52 +1,55 @@
 """
 Stock Biz AI
-Financial Result PDF Parser
+Financial Result PDF Parser V2
 """
 
 import re
 
 
-PATTERNS = {
-    "revenue": [
-        r"Revenue\s*from\s*Operations\s*[:\-]?\s*([\d,]+\.\d+|[\d,]+)",
-        r"Total\s*Income\s*[:\-]?\s*([\d,]+\.\d+|[\d,]+)",
-    ],
-    "ebitda": [
-        r"EBITDA\s*[:\-]?\s*([\d,]+\.\d+|[\d,]+)",
-    ],
-    "pat": [
-        r"Profit\s*After\s*Tax\s*[:\-]?\s*([\d,]+\.\d+|[\d,]+)",
-        r"Net\s*Profit\s*[:\-]?\s*([\d,]+\.\d+|[\d,]+)",
-    ],
-    "eps": [
-        r"EPS\s*[:\-]?\s*([\d,]+\.\d+|[\d,]+)",
-        r"Earnings\s*Per\s*Share\s*[:\-]?\s*([\d,]+\.\d+|[\d,]+)",
-    ],
-}
-
-
-def clean_value(value):
-    """Remove commas and spaces."""
+def clean_number(value):
 
     if not value:
         return None
 
-    value = value.replace(",", "").strip()
+    value = (
+        str(value)
+        .replace(",", "")
+        .replace("₹", "")
+        .replace("Rs.", "")
+        .strip()
+    )
 
-    return value
+    try:
+        return float(value)
+    except:
+        return value
 
 
-def find_value(text, patterns):
+def find_two_values(text, keywords):
 
-    for pattern in patterns:
+    for keyword in keywords:
 
-        match = re.search(pattern, text, re.IGNORECASE)
+        pattern = (
+            rf"{keyword}.*?"
+            r"([\d,]+\.\d+|[\d,]+)"
+            r".*?"
+            r"([\d,]+\.\d+|[\d,]+)"
+        )
+
+        match = re.search(
+            pattern,
+            text,
+            re.IGNORECASE | re.DOTALL
+        )
 
         if match:
 
-            return clean_value(match.group(1))
+            return (
+                clean_number(match.group(1)),
+                clean_number(match.group(2))
+            )
 
-    return None
+    return (None, None)
 
 
 def parse_financial_result(text):
@@ -54,10 +57,51 @@ def parse_financial_result(text):
     if not text:
         return {}
 
-    result = {}
+    revenue_current, revenue_previous = find_two_values(
+        text,
+        [
+            "Revenue from Operations",
+            "Revenue",
+            "Total Income"
+        ]
+    )
 
-    for key, patterns in PATTERNS.items():
+    pat_current, pat_previous = find_two_values(
+        text,
+        [
+            "Profit After Tax",
+            "Net Profit",
+            "Profit for the period"
+        ]
+    )
 
-        result[key] = find_value(text, patterns)
+    ebitda_current, ebitda_previous = find_two_values(
+        text,
+        [
+            "EBITDA"
+        ]
+    )
 
-    return result
+    eps_current, eps_previous = find_two_values(
+        text,
+        [
+            "EPS",
+            "Earnings Per Share"
+        ]
+    )
+
+    return {
+
+        "revenue_current": revenue_current,
+        "revenue_previous": revenue_previous,
+
+        "pat_current": pat_current,
+        "pat_previous": pat_previous,
+
+        "ebitda_current": ebitda_current,
+        "ebitda_previous": ebitda_previous,
+
+        "eps_current": eps_current,
+        "eps_previous": eps_previous
+
+    }
