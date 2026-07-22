@@ -323,21 +323,36 @@ def format_ai_analysis(company, analysis):
 
     summary = ai.get("summary", [])
 
-    if isinstance(summary, str):
-        summary = [summary]
+if isinstance(summary, str):
+    summary = [summary]
 
-    if summary:
+if summary:
 
-        message += "━━━━━━━━━━━━━━━━━━\n\n"
+    message += "━━━━━━━━━━━━━━━━━━\n\n"
 
-        message += "🧠 <b>AI Insights</b>\n\n"
+    message += "🧠 <b>AI Insights</b>\n\n"
 
-        for item in summary:
+    for item in summary:
 
-            if item:
-                message += f"• {escape(str(item))}\n"
+        if item:
+            message += f"• {escape(str(item))}\n"
 
-                message += "\n"
+    message += "\n"
+
+remarks = quality.get("remarks", [])
+
+if remarks:
+
+    message += "━━━━━━━━━━━━━━━━━━\n\n"
+
+    message += "📋 <b>Quality Analysis</b>\n\n"
+
+    for remark in remarks:
+
+        if remark:
+            message += f"• {escape(str(remark))}\n"
+
+    message += "\n"
 
     remarks = quality.get("remarks", [])
 
