@@ -18,6 +18,7 @@ from scripts.quality_analyzer import analyze_quality
 from scripts.result_pdf_parser import parse_financial_result
 from scripts.growth_calculator import calculate_growth
 from scripts.financial_score import calculate_financial_score
+from scripts.ai_verdict import generate_verdict
 
 
 def analyze_pdf(pdf_url):
@@ -25,7 +26,9 @@ def analyze_pdf(pdf_url):
     Complete PDF Analysis Pipeline
     """
 
+    # ---------------------------------
     # Download PDF + Extract Text
+    # ---------------------------------
     pdf = process_pdf(pdf_url)
 
     if not pdf:
@@ -66,7 +69,6 @@ def analyze_pdf(pdf_url):
 
             tables = extract_tables(pdf_path)
 
-            # Keep only Financial Tables
             financial_tables = get_financial_tables(tables)
 
             if financial_tables:
@@ -75,9 +77,13 @@ def analyze_pdf(pdf_url):
 
                 financial_data = table_to_dictionary(best_table)
 
-                financial_data = normalize_dictionary(financial_data)
+                financial_data = normalize_dictionary(
+                    financial_data
+                )
 
-                mapped_financials = map_financial_data(financial_data)
+                mapped_financials = map_financial_data(
+                    financial_data
+                )
 
             else:
 
@@ -106,6 +112,14 @@ def analyze_pdf(pdf_url):
         )
 
         # ---------------------------------
+        # AI Verdict
+        # ---------------------------------
+        verdict = generate_verdict(
+            growth,
+            score
+        )
+
+        # ---------------------------------
         # Final Output
         # ---------------------------------
         return {
@@ -126,6 +140,8 @@ def analyze_pdf(pdf_url):
 
             "score": score,
 
+            "verdict": verdict,
+
             "ai": ai
 
         }
@@ -138,5 +154,7 @@ def analyze_pdf(pdf_url):
 
     finally:
 
+        # ---------------------------------
         # Delete Temporary PDF
+        # ---------------------------------
         delete_temp_pdf(pdf_path)
