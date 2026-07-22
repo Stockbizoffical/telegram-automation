@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime
 import time
+import json
 
 URL = "https://api.bseindia.com/BseIndiaAPI/api/AnnSubCategoryGetData/w"
 
@@ -26,7 +27,7 @@ def get_bse_announcements():
         "strPrevDate": today,
         "strToDate": today,
         "strScrip": "",
-        "strSearch": "P",
+        "strSearch": "",
         "strType": "C",
         "subcategory": "",
     }
@@ -66,6 +67,14 @@ def get_bse_announcements():
         print("=" * 60)
 
         data = response.json()
+
+        print("RESPONSE KEYS :", list(data.keys()))
+
+        print("=" * 60)
+        print("RESPONSE PREVIEW")
+        print("=" * 60)
+        print(json.dumps(data, indent=2)[:2000])
+        print("=" * 60)
 
         announcements = data.get("Table", [])
 
