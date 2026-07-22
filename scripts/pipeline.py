@@ -19,6 +19,7 @@ from scripts.result_pdf_parser import parse_financial_result
 from scripts.growth_calculator import calculate_growth
 from scripts.financial_score import calculate_financial_score
 from scripts.ai_engine import build_ai_engine
+from scripts.data_merger import merge_financial_data
 
 
 def analyze_pdf(pdf_url):
@@ -47,12 +48,7 @@ def analyze_pdf(pdf_url):
         # ---------------------------------
         # Parse Financial Values (Regex)
         # ---------------------------------
-        financials = parse_financial_result(text)
-
-        # ---------------------------------
-        # Calculate Growth
-        # ---------------------------------
-        growth = calculate_growth(financials)
+        regex_financials = parse_financial_result(text)
 
         # ---------------------------------
         # Generate AI Summary
@@ -63,7 +59,7 @@ def analyze_pdf(pdf_url):
         # Extract Financial Tables
         # ---------------------------------
         financial_data = {}
-        mapped_financials = {}
+        table_financials = {}
 
         try:
 
@@ -81,7 +77,7 @@ def analyze_pdf(pdf_url):
                     financial_data
                 )
 
-                mapped_financials = map_financial_data(
+                table_financials = map_financial_data(
                     financial_data
                 )
 
@@ -92,6 +88,21 @@ def analyze_pdf(pdf_url):
         except Exception as e:
 
             print(f"Table Parser Error : {e}")
+
+        # ---------------------------------
+        # Merge Regex + Table Data
+        # ---------------------------------
+        financials = merge_financial_data(
+            regex_financials,
+            table_financials
+        )
+
+        # ---------------------------------
+        # Calculate Growth
+        # ---------------------------------
+        growth = calculate_growth(
+            financials
+        )
 
         # ---------------------------------
         # Trend Analysis
@@ -130,9 +141,11 @@ def analyze_pdf(pdf_url):
 
             "metrics": metrics,
 
-            "financials": financials,
+            "regex_financials": regex_financials,
 
-            "mapped_financials": mapped_financials,
+            "table_financials": table_financials,
+
+            "financials": financials,
 
             "growth": growth,
 
