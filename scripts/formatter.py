@@ -354,21 +354,7 @@ if remarks:
 
     message += "\n"
 
-    remarks = quality.get("remarks", [])
-
-    if remarks:
-
-        message += "━━━━━━━━━━━━━━━━━━\n\n"
-
-        message += "📋 <b>Quality Analysis</b>\n\n"
-
-        for remark in remarks:
-
-            if remark:
-                message += f"• {escape(str(remark))}\n"
-
-        message += "\n"
-
+    
     impact = trend.get("Impact Score")
 
     if impact is not None:
@@ -388,6 +374,7 @@ if remarks:
     message += "━━━━━━━━━━━━━━━━━━\n\n"
 
     message += """⚠️ <b>Disclaimer</b>
+
 
 This report is generated automatically using AI.
 
