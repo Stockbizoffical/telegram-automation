@@ -1,5 +1,6 @@
 from scripts.filters import get_category, get_impact_score
 from scripts.storage import is_duplicate
+from scripts.result_detector import is_financial_result
 
 MIN_IMPACT_SCORE = 80
 
@@ -16,11 +17,25 @@ def get_valid_announcements(announcements, source="bse"):
         category = get_category(subject)
         score = get_impact_score(category)
 
-        # Ignore Low Priority News
-        if score < MIN_IMPACT_SCORE:
+        # --------------------------------
+        # Financial Result Always Allow
+        # --------------------------------
+        if is_financial_result(item):
+
+            category = "RESULT"
+
+            if score < MIN_IMPACT_SCORE:
+                score = 100
+
+        # --------------------------------
+        # Skip Low Priority News
+        # --------------------------------
+        elif score < MIN_IMPACT_SCORE:
             continue
 
+        # --------------------------------
         # Duplicate Check
+        # --------------------------------
         if is_duplicate(source, news_id):
             continue
 
