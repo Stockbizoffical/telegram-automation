@@ -3,9 +3,7 @@ Stock Biz AI
 Financial Result Detector
 """
 
-
 KEYWORDS = [
-
     "financial results",
     "quarterly results",
     "annual results",
@@ -19,24 +17,31 @@ KEYWORDS = [
     "q3",
     "q4",
     "fy",
-    "board meeting"
-
+    "board meeting",
 ]
 
 
 def is_financial_result(announcement):
 
     subject = str(announcement.get("NEWSSUB", "")).lower()
-
     headline = str(announcement.get("HEADLINE", "")).lower()
-
     more = str(announcement.get("MORE", "")).lower()
 
-    text = subject + " " + headline + " " + more
+    print("=" * 70)
+    print("DEBUG : Financial Result Detector")
+    print("NEWSSUB :", subject)
+    print("HEADLINE :", headline)
+    print("MORE :", more)
+    print("=" * 70)
+
+    text = f"{subject} {headline} {more}"
 
     for keyword in KEYWORDS:
 
         if keyword in text:
+            print(f"✅ Matched Keyword : {keyword}")
             return True
+
+    print("❌ Financial Result : FALSE")
 
     return False
