@@ -6,25 +6,25 @@ Financial Mapper
 
 KEYWORDS = {
 
-    "Revenue": [
+    "revenue": [
         "revenue",
         "revenue from operations",
         "total income",
         "income"
     ],
 
-    "EBITDA": [
+    "ebitda": [
         "ebitda",
         "operating profit"
     ],
 
-    "PAT": [
+    "pat": [
         "profit after tax",
         "net profit",
         "profit for the period"
     ],
 
-    "EPS": [
+    "eps": [
         "eps",
         "earning per share",
         "earnings per share"
@@ -58,17 +58,29 @@ def map_financial_data(financial_data):
 
                     if isinstance(row_value, dict):
 
-                        result[metric] = row_value
+                        result[f"{metric}_current"] = row_value.get(
+                            "Current"
+                        )
+
+                        result[f"{metric}_previous"] = row_value.get(
+                            "Previous"
+                        )
+
+                    elif isinstance(row_value, list):
+
+                        if len(row_value) > 0:
+                            result[f"{metric}_current"] = row_value[0]
+
+                        if len(row_value) > 1:
+                            result[f"{metric}_previous"] = row_value[1]
 
                     else:
 
-                        result[metric] = {
-                            "Current": row_value
-                        }
+                        result[f"{metric}_current"] = row_value
 
                     break
 
-            if metric in result:
+            if f"{metric}_current" in result:
                 break
 
     return result
