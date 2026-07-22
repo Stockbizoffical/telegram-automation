@@ -12,30 +12,34 @@ def get_valid_announcements(announcements, source="bse"):
     for item in announcements:
 
         news_id = item.get("NEWSID", "")
-        subject = item.get("NEWSSUB", "")
 
-        category = get_category(subject)
+        subject = item.get("NEWSSUB", "")
+        headline = item.get("HEADLINE", "")
+
+        # NEWSSUB + HEADLINE दोनों पर Category Detect करें
+        text = f"{subject} {headline}"
+
+        category = get_category(text)
         score = get_impact_score(category)
 
-        # --------------------------------
-        # Financial Result Always Allow
-        # --------------------------------
+        # Financial Results को हमेशा Allow करें
         if is_financial_result(item):
-
             category = "RESULT"
+            score = 100
 
-            if score < MIN_IMPACT_SCORE:
-                score = 100
+        print("=" * 60)
+        print("Company :", item.get("SLONGNAME"))
+        print("Category :", category)
+        print("Impact Score :", score)
+        print("Duplicate :", is_duplicate(source, news_id))
+        print("Financial Result :", is_financial_result(item))
+        print("=" * 60)
 
-        # --------------------------------
         # Skip Low Priority News
-        # --------------------------------
-        elif score < MIN_IMPACT_SCORE:
+        if score < MIN_IMPACT_SCORE:
             continue
 
-        # --------------------------------
-        # Duplicate Check
-        # --------------------------------
+        # Skip Duplicate News
         if is_duplicate(source, news_id):
             continue
 
@@ -43,5 +47,7 @@ def get_valid_announcements(announcements, source="bse"):
         item["IMPACT_SCORE"] = score
 
         valid.append(item)
+
+    print(f"TOTAL HIGH PRIORITY : {len(valid)}")
 
     return valid
