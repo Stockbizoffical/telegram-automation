@@ -2,8 +2,8 @@ HIGH_PRIORITY = {
     "RESULT": [
         "financial results",
         "quarterly results",
-        "standalone results",
-        "consolidated results",
+        "standalone financial results",
+        "consolidated financial results",
         "audited financial results",
         "unaudited financial results",
     ],
@@ -24,7 +24,7 @@ HIGH_PRIORITY = {
         "stock split",
         "sub division",
         "sub-division",
-        "face value",
+        "face value split",
     ],
 
     "BUYBACK": [
@@ -46,57 +46,82 @@ HIGH_PRIORITY = {
         "block deal",
     ],
 }
+
+
+IGNORE_WORDS = [
+    "newspaper",
+    "advertisement",
+    "closure of trading window",
+    "trading window",
+    "shareholding pattern",
+    "postal ballot",
+    "scrutinizer",
+    "agm",
+    "egm",
+    "voting result",
+    "compliance certificate",
+    "certificate under regulation",
+    "investor presentation",
+    "analyst meet",
+    "conference call",
+    "transcript",
+    "loss of share certificate",
+]
+
+
+IMPORTANT_BOARD_TOPICS = [
+    "financial results",
+    "quarterly results",
+    "dividend",
+    "bonus",
+    "buyback",
+    "rights",
+    "stock split",
+    "sub division",
+    "qip",
+    "fund raising",
+]
+
+
+IMPACT_SCORE = {
+    "RESULT": 100,
+    "DIVIDEND": 95,
+    "BONUS": 95,
+    "BUYBACK": 95,
+    "SPLIT": 90,
+    "RIGHTS": 90,
+    "QIP": 90,
+    "BULK": 85,
+    "BOARD": 80,
+    "OTHER": 20,
+    "IGNORE": 0,
+}
+
+
 def get_category(subject):
 
-    text = subject.lower()
+    text = subject.lower().strip()
 
-    # High Priority Categories
     for category, keywords in HIGH_PRIORITY.items():
         for keyword in keywords:
             if keyword in text:
                 return category
 
-    # Board Meeting Filter
     if "board meeting" in text:
-        important_topics = [
-            "financial results",
-            "quarterly results",
-            "dividend",
-            "bonus",
-            "buyback",
-            "stock split",
-            "rights",
-            "qip",
-            "fund raising",
-        ]
 
-        if any(topic in text for topic in important_topics):
-            return "BOARD"
+        for topic in IMPORTANT_BOARD_TOPICS:
+            if topic in text:
+                return "BOARD"
 
         return "IGNORE"
 
-    # Low Priority / Ignore
-    ignore_words = [
-        "newspaper",
-        "advertisement",
-        "closure of trading window",
-        "trading window",
-        "shareholding pattern",
-        "postal ballot",
-        "scrutinizer",
-        "agm",
-        "egm",
-        "voting result",
-        "compliance certificate",
-        "analyst meet",
-        "investor presentation",
-        "transcript",
-        "certificate under regulation",
-        "loss of share certificate",
-    ]
-
-    for word in ignore_words:
+    for word in IGNORE_WORDS:
         if word in text:
             return "IGNORE"
 
     return "OTHER"
+
+
+def get_impact_score(category):
+
+    return IMPACT_SCORE.get(category, 0)
