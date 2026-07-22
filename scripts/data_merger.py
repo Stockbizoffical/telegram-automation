@@ -4,42 +4,55 @@ Financial Data Merger
 """
 
 
+def is_empty(value):
+
+    return value in (
+        None,
+        "",
+        "-",
+        "--",
+        "NA",
+        "N/A"
+    )
+
+
 def merge_financial_data(regex_data, table_data):
     """
-    Merge Regex Data and Table Data
+    Merge Regex + Table Financial Data
 
     Priority:
-    1. Regex Value
-    2. Table Value
+    1. Regex
+    2. Table
     """
+
+    regex_data = regex_data or {}
+    table_data = table_data or {}
 
     merged = {}
 
-    keys = set()
+    all_keys = set(regex_data.keys()) | set(table_data.keys())
 
-    if regex_data:
-        keys.update(regex_data.keys())
+    for key in all_keys:
 
-    if table_data:
-        keys.update(table_data.keys())
+        regex_value = regex_data.get(key)
+        table_value = table_data.get(key)
 
-    for key in keys:
+        if not is_empty(regex_value):
 
-        value = None
+            merged[key] = regex_value
 
-        # Prefer Regex Value
-        if regex_data:
+        elif not is_empty(table_value):
 
-            value = regex_data.get(key)
+            merged[key] = table_value
 
-            if value in ("", None, "-", "--"):
-                value = None
+        else:
 
-        # Use Table Value if Regex Missing
-        if value is None and table_data:
+            merged[key] = None
 
-            value = table_data.get(key)
-
-        merged[key] = value
+    print("=" * 80)
+    print("MERGED FINANCIAL DATA")
+    for k, v in merged.items():
+        print(f"{k} : {v}")
+    print("=" * 80)
 
     return merged
