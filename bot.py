@@ -123,12 +123,22 @@ for announcement in announcements:
 
             continue
 
-        send_message(message)
+        if send_message(message):
 
-        save_news(
-            SOURCE,
-            news_id
-        )
+    save_news(
+        SOURCE,
+        news_id
+    )
+
+    success(
+        f"Telegram Sent : {company}"
+    )
+
+else:
+
+    warning(
+        f"Telegram Send Failed : {company}"
+    )
 
         print(f"✅ Sent : {company}")
 
