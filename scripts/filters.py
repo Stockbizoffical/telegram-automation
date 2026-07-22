@@ -1,64 +1,48 @@
-RESULT_KEYWORDS = [
-    "Financial Results",
-    "Standalone Financial Results",
-    "Consolidated Financial Results",
-    "Quarterly Results",
-    "Audited Financial Results",
-    "Unaudited Financial Results",
-]
+HIGH_PRIORITY = {
+    "RESULT": [
+        "financial results",
+        "quarterly results",
+        "standalone results",
+        "consolidated results",
+        "audited financial results",
+        "unaudited financial results",
+    ],
 
-DIVIDEND_KEYWORDS = [
-    "Dividend",
-]
+    "DIVIDEND": [
+        "dividend",
+        "interim dividend",
+        "final dividend",
+        "special dividend",
+    ],
 
-BONUS_KEYWORDS = [
-    "Bonus",
-]
+    "BONUS": [
+        "bonus issue",
+        "bonus shares",
+    ],
 
-SPLIT_KEYWORDS = [
-    "Split",
-    "Stock Split",
-    "Sub-Division",
-]
+    "SPLIT": [
+        "stock split",
+        "sub division",
+        "sub-division",
+        "face value",
+    ],
 
-BOARD_KEYWORDS = [
-    "Board Meeting",
-]
+    "BUYBACK": [
+        "buyback",
+        "buy back",
+    ],
 
-BULK_KEYWORDS = [
-    "Bulk Deal",
-    "Block Deal",
-]
+    "RIGHTS": [
+        "rights issue",
+    ],
 
+    "QIP": [
+        "qualified institutions placement",
+        "qip",
+    ],
 
-def contains_keyword(text, keywords):
-    text = text.lower()
-
-    for keyword in keywords:
-        if keyword.lower() in text:
-            return True
-
-    return False
-
-
-def get_category(subject):
-
-    if contains_keyword(subject, RESULT_KEYWORDS):
-        return "RESULT"
-
-    if contains_keyword(subject, DIVIDEND_KEYWORDS):
-        return "DIVIDEND"
-
-    if contains_keyword(subject, BONUS_KEYWORDS):
-        return "BONUS"
-
-    if contains_keyword(subject, SPLIT_KEYWORDS):
-        return "SPLIT"
-
-    if contains_keyword(subject, BOARD_KEYWORDS):
-        return "BOARD"
-
-    if contains_keyword(subject, BULK_KEYWORDS):
-        return "BULK"
-
-    return "OTHER"
+    "BULK": [
+        "bulk deal",
+        "block deal",
+    ],
+}
