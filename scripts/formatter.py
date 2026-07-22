@@ -6,7 +6,6 @@ def safe(value, default="-"):
     """
     Return safe string value.
     """
-
     if value is None:
         return default
 
@@ -23,12 +22,10 @@ def format_number(value):
     """
     Format Financial Numbers
     """
-
     if value in (None, "-", ""):
         return "-"
 
     try:
-
         num = float(str(value).replace(",", ""))
 
         if abs(num) >= 10000000:
@@ -46,7 +43,6 @@ def format_number(value):
         return f"₹{num:,.2f}"
 
     except Exception:
-
         return str(value)
 
 
@@ -54,12 +50,10 @@ def get_growth_icon(value):
     """
     Growth Icon
     """
-
     if value is None:
         return "⚪"
 
     try:
-
         value = float(value)
 
         if value >= 20:
@@ -74,7 +68,6 @@ def get_growth_icon(value):
         return "🔴"
 
     except Exception:
-
         return "⚪"
 
 
@@ -82,18 +75,15 @@ def get_signal_icon(signal):
     """
     Signal Icon
     """
-
     signal = str(signal).upper()
 
     mapping = {
-
         "STRONG BUY": "🚀",
         "BUY": "🟢",
         "HOLD": "🟡",
         "SELL": "🔴",
         "AVOID": "⛔",
         "STRONG SELL": "⛔",
-
     }
 
     return mapping.get(signal, "⚪")
@@ -103,9 +93,7 @@ def get_star(score):
     """
     Rating Stars
     """
-
     try:
-
         score = float(score)
 
         if score >= 90:
@@ -123,7 +111,6 @@ def get_star(score):
         return "★☆☆☆☆"
 
     except Exception:
-
         return "-"
 
 
@@ -139,16 +126,12 @@ def format_bse_announcement(data):
     category = str(data.get("CATEGORY", "OTHER")).upper()
 
     try:
-
         dt = datetime.fromisoformat(raw_date)
         date = dt.strftime("%d %b %Y | %I:%M %p")
-
     except Exception:
-
         date = safe(raw_date)
 
     category_icon = {
-
         "RESULT": "📊",
         "FINANCIAL RESULTS": "📊",
         "DIVIDEND": "💰",
@@ -165,7 +148,6 @@ def format_bse_announcement(data):
         "ACQUISITION": "🤝",
         "PREFERENTIAL ISSUE": "🪙",
         "OTHER": "📢",
-
     }
 
     icon = category_icon.get(category, "📢")
@@ -195,7 +177,6 @@ def format_bse_announcement(data):
 """
 
     if pdf:
-
         message += f"""
 
 ━━━━━━━━━━━━━━━━━━
@@ -269,12 +250,10 @@ def format_ai_analysis(company, analysis):
 """
 
     metrics = [
-
         ("Revenue", "revenue", "📈"),
         ("PAT", "pat", "💰"),
         ("EBITDA", "ebitda", "⚙️"),
         ("EPS", "eps", "💵"),
-
     ]
 
     for title, key, emoji in metrics:
@@ -289,15 +268,10 @@ def format_ai_analysis(company, analysis):
         icon = get_growth_icon(growth_value)
 
         if growth_value is None:
-
             growth_text = "-"
-
         elif growth_value >= 0:
-
             growth_text = f"+{growth_value:.2f}%"
-
         else:
-
             growth_text = f"{growth_value:.2f}%"
 
         message += (
@@ -310,58 +284,55 @@ def format_ai_analysis(company, analysis):
     message += "━━━━━━━━━━━━━━━━━━\n\n"
 
     message += f"🎯 <b>Verdict</b>\n\n"
-
     message += f"{escape(str(verdict))}\n\n"
 
     message += f"💡 <b>Investment View</b>\n\n"
-
     message += f"{escape(str(investment))}\n\n"
 
     message += f"⚠️ <b>Risk Level</b>\n\n"
-
     message += f"{escape(str(risk))}\n\n"
+
 
     summary = ai.get("summary", [])
 
-if isinstance(summary, str):
-    summary = [summary]
+    if isinstance(summary, str):
+        summary = [summary]
 
-if summary:
+    if summary:
 
-    message += "━━━━━━━━━━━━━━━━━━\n\n"
+        message += "━━━━━━━━━━━━━━━━━━\n\n"
 
-    message += "🧠 <b>AI Insights</b>\n\n"
+        message += "🧠 <b>AI Insights</b>\n\n"
 
-    for item in summary:
+        for item in summary:
 
-        if item:
-            message += f"• {escape(str(item))}\n"
+            if item:
+                message += f"• {escape(str(item))}\n"
 
-    message += "\n"
+        message += "\n"
 
-remarks = quality.get("remarks", [])
+    remarks = quality.get("remarks", [])
 
-if remarks:
+    if remarks:
 
-    message += "━━━━━━━━━━━━━━━━━━\n\n"
+        message += "━━━━━━━━━━━━━━━━━━\n\n"
 
-    message += "📋 <b>Quality Analysis</b>\n\n"
+        message += "📋 <b>Quality Analysis</b>\n\n"
 
-    for remark in remarks:
+        for remark in remarks:
 
-        if remark:
-            message += f"• {escape(str(remark))}\n"
+            if remark:
+                message += f"• {escape(str(remark))}\n"
 
-    message += "\n"
+        message += "\n"
 
-    
     impact = trend.get("Impact Score")
 
     if impact is not None:
 
         message += "━━━━━━━━━━━━━━━━━━\n\n"
 
-        message += f"⭐ <b>Impact Score</b>\n\n"
+        message += "⭐ <b>Impact Score</b>\n\n"
 
         message += f"{impact}/100\n\n"
 
@@ -374,7 +345,6 @@ if remarks:
     message += "━━━━━━━━━━━━━━━━━━\n\n"
 
     message += """⚠️ <b>Disclaimer</b>
-
 
 This report is generated automatically using AI.
 
