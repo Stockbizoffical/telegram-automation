@@ -13,6 +13,7 @@ from scripts.trend_analyzer import analyze_trends
 from scripts.quality_analyzer import analyze_quality
 from scripts.result_pdf_parser import parse_financial_result
 from scripts.growth_calculator import calculate_growth
+from scripts.financial_score import calculate_financial_score
 
 
 def analyze_pdf(pdf_url):
@@ -85,6 +86,14 @@ def analyze_pdf(pdf_url):
         quality = analyze_quality(trend)
 
         # ---------------------------------
+        # AI Financial Score
+        # ---------------------------------
+        score = calculate_financial_score(
+            growth,
+            quality
+        )
+
+        # ---------------------------------
         # Final Output
         # ---------------------------------
         return {
@@ -102,6 +111,8 @@ def analyze_pdf(pdf_url):
             "trend": trend,
 
             "quality": quality,
+
+            "score": score,
 
             "ai": ai
 
