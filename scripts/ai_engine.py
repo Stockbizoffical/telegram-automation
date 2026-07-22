@@ -40,11 +40,14 @@ def build_ai_engine(
         "confidence": confidence,
 
         "signal": verdict.get(
-    "signal",
-    score.get("signal", "HOLD")
-),
+            "signal",
+            score.get("signal", "Average")
+        ),
 
-        "verdict": verdict.get("verdict", "Neutral"),
+        "verdict": verdict.get(
+            "verdict",
+            "Neutral"
+        ),
 
         "investment_view": verdict.get(
             "investment",
@@ -138,7 +141,7 @@ def build_summary(
 
         elif revenue >= 0:
             lines.append(
-                "Revenue reported moderate growth."
+                "Revenue recorded stable growth."
             )
 
         else:
@@ -156,7 +159,7 @@ def build_summary(
 
         elif pat >= 0:
             lines.append(
-                "Profit remained stable."
+                "Profit remained stable with positive earnings."
             )
 
         else:
@@ -187,8 +190,18 @@ def build_summary(
 
         elif eps < 0:
             lines.append(
-                "EPS declined."
+                "EPS declined, indicating pressure on earnings."
             )
+
+    # Financial Strength
+    strength = verdict.get(
+        "signal",
+        "Average"
+    )
+
+    lines.append(
+        f"Financial Strength : {strength}"
+    )
 
     # Investment View
     investment = verdict.get(
@@ -200,7 +213,7 @@ def build_summary(
         f"Investment View : {investment}"
     )
 
-    # Risk
+    # Risk Level
     risk = verdict.get(
         "risk",
         "Medium"
