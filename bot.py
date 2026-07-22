@@ -1,6 +1,6 @@
 from scripts.bse import get_bse_announcements
 from scripts.telegram import send_message
-from scripts.storage import get_last_news, save_last_news
+from scripts.storage import save_news
 from scripts.formatter import format_bse_announcement
 from scripts.engine import get_valid_announcements
 
@@ -35,7 +35,7 @@ for announcement in announcements:
 
     send_message(message)
 
-    save_last_news(SOURCE, news_id)
+    save_news(SOURCE, news_id)
 
     print(f"✅ Sent : {announcement.get('SLONGNAME','')}")
 
