@@ -1,14 +1,3 @@
-"""
-Stock Biz AI
-Pipeline Module
-"""
-
-from scripts.pdf_reader import process_pdf, delete_temp_pdf
-from scripts.result_parser import extract_metrics
-from scripts.ai_summary import generate_summary
-from scripts.table_parser import extract_tables, table_to_dictionary
-
-
 def analyze_pdf(pdf_url):
     """
     Complete PDF Analysis Pipeline
@@ -29,7 +18,7 @@ def analyze_pdf(pdf_url):
     # AI Summary
     ai = generate_summary(metrics)
 
-    # Extract Tables
+    # Extract Financial Tables
     tables = extract_tables(pdf_path)
 
     financial_data = {}
@@ -37,9 +26,14 @@ def analyze_pdf(pdf_url):
     if tables:
 
         try:
+
             financial_data = table_to_dictionary(tables[0])
 
+            # Normalize Financial Keys
+            financial_data = normalize_dictionary(financial_data)
+
         except Exception as e:
+
             print(f"Table Parser Error: {e}")
 
     # Delete Temporary PDF
