@@ -1,79 +1,128 @@
 """
 Stock Biz AI
-Smart Financial Mapper
+Smart Financial Mapper V2
 """
+
+import re
+
 
 FINANCIAL_ALIASES = {
 
     "Revenue": [
-        "Revenue",
-        "Revenue from Operations",
-        "Revenue From Operations",
-        "Income from Operations",
-        "Income From Operations",
-        "Sales",
-        "Net Sales",
-        "Total Income",
-        "Operating Revenue"
+
+        "revenue",
+        "revenue from operations",
+        "revenue from operation",
+        "total revenue",
+        "income",
+        "income from operations",
+        "income from operation",
+        "operating revenue",
+        "sales",
+        "net sales",
+        "gross sales",
+        "turnover",
+        "total income"
+
     ],
 
     "PAT": [
-        "Profit After Tax",
-        "Net Profit",
-        "Profit for the Period",
-        "Profit After Tax (PAT)",
-        "Profit for period",
-        "Net Profit After Tax",
-        "Profit attributable to owners"
+
+        "profit after tax",
+        "net profit",
+        "profit for the period",
+        "profit for period",
+        "profit for the year",
+        "profit attributable",
+        "profit/(loss) for the period",
+        "profit (loss) for the period",
+        "loss for the period",
+        "profit"
+
     ],
 
     "EBITDA": [
-        "EBITDA",
-        "Operating Profit",
-        "Operating EBITDA",
-        "EBIT"
+
+        "ebitda",
+        "operating profit",
+        "operating ebitda",
+        "ebit"
+
     ],
 
     "EPS": [
-        "EPS",
-        "Basic EPS",
-        "Diluted EPS",
-        "Earnings Per Share",
-        "Basic Earnings Per Share"
+
+        "eps",
+        "earning per share",
+        "earnings per share",
+        "basic eps",
+        "diluted eps",
+        "basic earning per share",
+        "basic earnings per share",
+        "diluted earning per share",
+        "equity share"
+
     ]
+
 }
 
 
+def clean_key(text):
+
+    text = str(text).lower()
+
+    text = text.replace("\n", " ")
+
+    text = re.sub(r"\(.*?\)", " ", text)
+
+    text = re.sub(r"[^a-z ]", " ", text)
+
+    text = re.sub(r"\s+", " ", text)
+
+    return text.strip()
+
+
 def normalize_dictionary(data):
-    """
-    Normalize Financial Keys
-    """
 
     if not data:
+
         return {}
 
     normalized = {}
 
     for key, value in data.items():
 
-        key_text = str(key).strip().lower()
+        cleaned = clean_key(key)
 
-        found = False
+        matched = False
 
-        for standard_name, aliases in FINANCIAL_ALIASES.items():
+        for standard, aliases in FINANCIAL_ALIASES.items():
 
             for alias in aliases:
 
-                if alias.lower() in key_text:
+                if alias in cleaned:
 
-                    normalized[standard_name] = value
-                    found = True
+                    normalized[standard] = value
+
+                    matched = True
+
                     break
 
-            if found:
+            if matched:
+
                 break
 
-        if not found:
+        if not matched:
+
             normalized[key] = value
+
+    print("=" * 80)
+    print("SMART MAPPER")
+
+    for k, v in normalized.items():
+
+        print(k, ":", v)
+
+    print("=" * 80)
 
     return normalized
