@@ -10,6 +10,7 @@ HEADERS = {
     "Origin": "https://www.bseindia.com",
 }
 
+
 def get_bse_announcements():
     today = datetime.now().strftime("%Y%m%d")
 
@@ -25,6 +26,7 @@ def get_bse_announcements():
     }
 
     try:
+
         r = requests.get(
             URL,
             headers=HEADERS,
@@ -47,12 +49,25 @@ def get_bse_announcements():
 
         print("JSON KEYS:", data.keys())
 
-        if "Table" in data:
+        if "Table" in data and data["Table"]:
+
             print("TOTAL RECORDS:", len(data["Table"]))
+
+            print("\nFIRST ANNOUNCEMENT")
+            print("=" * 60)
+
+            first = data["Table"][0]
+
+            for key, value in first.items():
+                print(f"{key} : {value}")
+
+            print("=" * 60)
+
             return data["Table"]
 
         return []
 
     except Exception as e:
+
         print("ERROR:", str(e))
         return []
