@@ -27,9 +27,6 @@ def analyze_pdf(pdf_url):
     Complete PDF Analysis Pipeline
     """
 
-    # ---------------------------------
-    # Download PDF + Extract Text
-    # ---------------------------------
     pdf = process_pdf(pdf_url)
 
     if not pdf:
@@ -40,24 +37,24 @@ def analyze_pdf(pdf_url):
 
     try:
 
-        # ---------------------------------
-        # Extract Basic Metrics
-        # ---------------------------------
+        # -------------------------------
+        # Basic Metrics
+        # -------------------------------
         metrics = extract_metrics(text)
 
-        # ---------------------------------
-        # Parse Financial Values (Regex)
-        # ---------------------------------
+        # -------------------------------
+        # Regex Financial Parser
+        # -------------------------------
         regex_financials = parse_financial_result(text)
 
-        # ---------------------------------
-        # Generate AI Summary
-        # ---------------------------------
+        # -------------------------------
+        # AI Summary
+        # -------------------------------
         ai = generate_summary(metrics)
 
-        # ---------------------------------
-        # Extract Financial Tables
-        # ---------------------------------
+        # -------------------------------
+        # Table Parser
+        # -------------------------------
         financial_data = {}
         table_financials = {}
 
@@ -65,36 +62,38 @@ def analyze_pdf(pdf_url):
 
             tables = extract_tables(pdf_path)
 
+            print(f"Total Tables Found : {len(tables)}")
+
             financial_tables = get_financial_tables(tables)
+
+            print(f"Financial Tables Found : {len(financial_tables)}")
 
             if financial_tables:
 
-    best_score = -1
-    best_data = {}
+                best_score = -1
+                best_data = {}
+                best_financial_data = {}
 
-    for table in financial_tables:
+                for table in financial_tables:
 
-        temp_data = table_to_dictionary(table)
+                    temp_data = table_to_dictionary(table)
 
-        temp_data = normalize_dictionary(temp_data)
+                    temp_data = normalize_dictionary(temp_data)
 
-        mapped = map_financial_data(temp_data)
+                    mapped = map_financial_data(temp_data)
 
-        score = len(mapped)
+                    score = len(mapped)
 
-        if score > best_score:
+                    if score > best_score:
 
-            best_score = score
-            best_data = mapped
-            financial_data = temp_data
+                        best_score = score
+                        best_data = mapped
+                        best_financial_data = temp_data
 
-    table_financials = best_data
+                financial_data = best_financial_data
+                table_financials = best_data
 
-    print(f"Best Financial Table Score : {best_score}")
-
-                table_financials = map_financial_data(
-                    financial_data
-                )
+                print(f"Best Financial Table Score : {best_score}")
 
             else:
 
@@ -104,42 +103,40 @@ def analyze_pdf(pdf_url):
 
             print(f"Table Parser Error : {e}")
 
-        # ---------------------------------
-        # Merge Regex + Table Data
-        # ---------------------------------
+        # -------------------------------
+        # Merge Regex + Table
+        # -------------------------------
         financials = merge_financial_data(
             regex_financials,
             table_financials
         )
 
-        # ---------------------------------
-        # Calculate Growth
-        # ---------------------------------
-        growth = calculate_growth(
-            financials
-        )
+        # -------------------------------
+        # Growth
+        # -------------------------------
+        growth = calculate_growth(financials)
 
-        # ---------------------------------
-        # Trend Analysis
-        # ---------------------------------
+        # -------------------------------
+        # Trend
+        # -------------------------------
         trend = analyze_trends(financial_data)
 
-        # ---------------------------------
-        # Quality Analysis
-        # ---------------------------------
+        # -------------------------------
+        # Quality
+        # -------------------------------
         quality = analyze_quality(trend)
 
-        # ---------------------------------
-        # AI Financial Score
-        # ---------------------------------
+        # -------------------------------
+        # Score
+        # -------------------------------
         score = calculate_financial_score(
             growth,
             quality
         )
 
-        # ---------------------------------
-        # Master AI Engine
-        # ---------------------------------
+        # -------------------------------
+        # AI Engine
+        # -------------------------------
         ai_engine = build_ai_engine(
             metrics=metrics,
             financials=financials,
@@ -149,9 +146,6 @@ def analyze_pdf(pdf_url):
             score=score
         )
 
-        # ---------------------------------
-        # Final Output
-        # ---------------------------------
         return {
 
             "metrics": metrics,
@@ -186,7 +180,4 @@ def analyze_pdf(pdf_url):
 
     finally:
 
-        # ---------------------------------
-        # Delete Temporary PDF
-        # ---------------------------------
         delete_temp_pdf(pdf_path)
