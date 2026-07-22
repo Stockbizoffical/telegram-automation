@@ -297,7 +297,7 @@ def format_ai_analysis(company, analysis):
             if item:
                 message += f"• {escape(str(item))}\n"
 
-        message += "\n""
+        message += "\n"
 
     remarks = quality.get("remarks", [])
 
