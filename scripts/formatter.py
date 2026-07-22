@@ -11,7 +11,7 @@ def format_bse_announcement(data):
     try:
         dt = datetime.fromisoformat(raw_date)
         date = dt.strftime("%d %b %Y | %I:%M %p")
-    except:
+    except Exception:
         date = raw_date
 
     category_icon = {
@@ -57,50 +57,110 @@ def format_bse_announcement(data):
 """
 
     return message
+
+
+def get_growth_icon(value):
+
+    if value is None:
+        return "⚪"
+
+    try:
+        value = float(value)
+
+        if value >= 20:
+            return "🟢"
+
+        elif value >= 0:
+            return "🟡"
+
+        else:
+            return "🔴"
+
+    except Exception:
+        return "⚪"
+
+
 def format_ai_analysis(company, analysis):
 
     if not analysis:
         return ""
 
+    financial = analysis.get("financial_data", {})
     trend = analysis.get("trend", {})
     quality = analysis.get("quality", {})
-    financial = analysis.get("financial_data", {})
+    score = analysis.get("score", {})
+    growth = analysis.get("growth", {})
 
-    message = f"📊 <b>{company}</b>\n\n"
+    message = f"""
+📊 <b>{company}</b>
 
-    message += "📈 <b>Financial Snapshot</b>\n\n"
+━━━━━━━━━━━━━━━━━━
 
-    for metric in ["Revenue", "PAT", "EBITDA", "EPS"]:
+⭐ <b>AI Score :</b> {score.get("score","-")}/100
+
+📈 <b>Signal :</b> {score.get("signal","-")}
+
+📝 <b>Verdict :</b>
+{score.get("verdict","-")}
+
+━━━━━━━━━━━━━━━━━━
+
+<b>Financial Highlights</b>
+
+"""
+
+    metrics = [
+
+        ("Revenue", "revenue_growth"),
+        ("PAT", "pat_growth"),
+        ("EBITDA", "ebitda_growth"),
+        ("EPS", "eps_growth")
+
+    ]
+
+    for metric, growth_key in metrics:
+
+        value = "-"
 
         if metric in financial:
+            value = financial[metric].get("Current", "-")
 
-            current = financial[metric].get("Current", "-")
-            growth = trend.get(f"{metric} Growth")
+        growth_value = growth.get(growth_key)
 
-            message += f"<b>{metric}</b>\n"
+        icon = get_growth_icon(growth_value)
 
-            message += f"{current}"
+        message += f"{icon} <b>{metric}</b>\n"
 
-            if growth is not None:
-                message += f" ({growth}%)"
+        message += f"{value}"
 
-            message += "\n\n"
+        if growth_value is not None:
+            message += f" ({growth_value:.2f}%)"
 
-    message += "━━━━━━━━━━━━━━\n\n"
-
-    message += "🤖 <b>AI Analysis</b>\n\n"
+        message += "\n\n"
 
     remarks = quality.get("remarks", [])
 
-    for remark in remarks:
-        message += f"{remark}\n"
+    if remarks:
 
-    message += "\n"
+        message += "━━━━━━━━━━━━━━━━━━\n\n"
 
-    message += f"⭐ <b>Impact Score</b> : {trend.get('Impact Score', '-')}/100\n\n"
+        message += "🤖 <b>AI Analysis</b>\n\n"
 
-    message += f"🚀 <b>Verdict</b>\n"
+        for remark in remarks:
+            message += f"• {remark}\n"
 
-    message += quality.get("verdict", "-")
+        message += "\n"
+
+    impact = trend.get("Impact Score")
+
+    if impact is not None:
+
+        message += f"⭐ <b>Impact Score :</b> {impact}/100\n\n"
+
+    message += """
+━━━━━━━━━━━━━━━━━━
+
+🚀 <b>Powered by Stock Biz AI</b>
+"""
 
     return message
