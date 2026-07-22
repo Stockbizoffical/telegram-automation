@@ -238,7 +238,7 @@ def format_ai_analysis(company, analysis):
 
 <b>{ai_score}/100</b>
 
-{signal_icon} <b>Signal</b>
+{signal_icon} <b>Financial Strength</b>
 
 {escape(str(signal))}
 
