@@ -1,6 +1,6 @@
 """
 Stock Biz AI
-Advanced Table Parser
+Advanced Table Parser V3
 """
 
 import pdfplumber
@@ -19,15 +19,37 @@ def extract_tables(pdf_path):
 
             for page in pdf.pages:
 
-                tables = page.extract_tables()
+                print(f"Scanning Page : {page.page_number}")
+
+                # Primary Extraction
+                tables = page.extract_tables(
+                    {
+                        "vertical_strategy": "text",
+                        "horizontal_strategy": "text",
+                    }
+                )
 
                 if tables:
-
                     all_tables.extend(tables)
+
+                # Backup Extraction
+                else:
+
+                    table = page.extract_table(
+                        {
+                            "vertical_strategy": "text",
+                            "horizontal_strategy": "text",
+                        }
+                    )
+
+                    if table:
+                        all_tables.append(table)
 
     except Exception as e:
 
         print(f"Table Extraction Error : {e}")
+
+    print(f"Total Tables Found : {len(all_tables)}")
 
     return all_tables
 
@@ -54,9 +76,7 @@ def table_to_dictionary(table):
         if not key:
             continue
 
-        values = row[1:]
-
-        data[key] = values
+        data[key] = row[1:]
 
     return data
 
@@ -71,22 +91,31 @@ def get_financial_tables(tables):
     keywords = [
 
         "income",
-
+        "total income",
         "revenue",
-
-        "sales",
-
-        "profit",
-
-        "expense",
-
-        "ebitda",
-
-        "eps",
-
+        "revenue from operations",
         "operations",
-
-        "tax"
+        "sales",
+        "profit",
+        "profit before tax",
+        "profit after tax",
+        "pat",
+        "pbt",
+        "ebit",
+        "ebitda",
+        "eps",
+        "basic eps",
+        "diluted eps",
+        "expense",
+        "expenses",
+        "finance cost",
+        "other income",
+        "tax",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash flow",
+        "comprehensive income"
 
     ]
 
@@ -104,8 +133,14 @@ def get_financial_tables(tables):
 
         )
 
-        if any(word in text for word in keywords):
+        score = sum(
+            1 for keyword in keywords
+            if keyword in text
+        )
 
+        if score >= 3:
             financial_tables.append(table)
+
+    print(f"Financial Tables Found : {len(financial_tables)}")
 
     return financial_tables
