@@ -197,13 +197,14 @@ def format_ai_analysis(company, analysis):
     ai = analysis.get("ai_engine", {})
 
     financial = analysis.get("financials") or analysis.get("financial_data", {})
+    financial = financial if isinstance(financial, dict) else {}
     growth = analysis.get("growth", {})
     trend = analysis.get("trend", {})
     quality = analysis.get("quality", {})
     score = analysis.get("score", {})
 
-    ai_score = ai.get("score", score.get("score", "-"))
-    signal = ai.get("signal", score.get("signal", "-"))
+    ai_score = ai.get("score") or score.get("score", 0)
+    signal = ai.get("signal") or score.get("signal", "HOLD")
     verdict = ai.get("verdict", score.get("verdict", "-"))
     investment = ai.get("investment_view", "-")
     risk = ai.get("risk", "-")
