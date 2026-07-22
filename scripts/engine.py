@@ -5,6 +5,9 @@ ALLOWED_CATEGORIES = [
     "DIVIDEND",
     "BONUS",
     "SPLIT",
+    "BUYBACK",
+    "RIGHTS",
+    "QIP",
     "BOARD",
     "BULK",
 ]
