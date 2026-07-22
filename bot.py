@@ -3,7 +3,7 @@ from scripts.telegram import send_message
 from scripts.storage import save_news
 from scripts.formatter import (
     format_bse_announcement,
-    format_ai_analysis
+    format_ai_analysis,
 )
 from scripts.engine import get_valid_announcements
 from scripts.logger import log
@@ -31,14 +31,19 @@ if not announcements:
 for announcement in announcements:
 
     news_id = announcement.get("NEWSID", "")
-    company = announcement.get("SLONGNAME", "")
+    company = announcement.get("SLONGNAME", "Unknown Company")
 
     try:
 
-        # PDF Link
-        pdf_url = announcement.get("ATTACHMENTNAME", "")
+        pdf_url = str(announcement.get("ATTACHMENTNAME", "")).strip()
 
+        # Default Message
+        message = format_bse_announcement(announcement)
+
+        # AI Analysis (Only if PDF Available)
         if pdf_url:
+
+            log(f"Analyzing PDF : {company}")
 
             analysis = analyze_pdf(pdf_url)
 
@@ -46,26 +51,24 @@ for announcement in announcements:
 
                 message = format_ai_analysis(company, analysis)
 
+                log(f"AI Analysis Completed : {company}")
+
             else:
 
-                message = format_bse_announcement(announcement)
+                log(f"AI Analysis Failed : {company}")
 
-        else:
-
-            message = format_bse_announcement(announcement)
-
+        # Send Telegram Message
         send_message(message)
 
+        # Save Duplicate ID
         save_news(SOURCE, news_id)
 
         print(f"✅ Sent : {company}")
-
         log(f"Sent : {company}")
 
     except Exception as e:
 
-        print(e)
-
+        print(f"❌ Error : {e}")
         log(f"Telegram Error : {e}")
 
 print("🎉 Bot Finished Successfully")
