@@ -83,3 +83,4 @@ if __name__ == "__main__":
     pdf_url = ""
 
     run_test(pdf_url)
+pdf_url = ""
