@@ -22,15 +22,15 @@ def get_bse_announcements():
     print("=" * 60)
 
     params = {
-        "pageno": 1,
-        "strCat": "-1",
-        "strPrevDate": today,
-        "strToDate": today,
-        "strScrip": "",
-        "strSearch": "",
-        "strType": "C",
-        "subcategory": "",
-    }
+    "pageno": 1,
+    "strCat": "-1",
+    "strPrevDate": today,
+    "strToDate": today,
+    "strScrip": "",
+    "strSearch": "P",
+    "strType": "C",
+    "subcategory": "-1",
+}
 
     try:
 
