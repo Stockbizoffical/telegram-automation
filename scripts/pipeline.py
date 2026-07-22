@@ -37,6 +37,10 @@ def analyze_pdf(pdf_url):
 
     try:
 
+        print("=" * 80)
+        print("PIPELINE STARTED")
+        print("=" * 80)
+
         # -------------------------------
         # Basic Metrics
         # -------------------------------
@@ -46,6 +50,10 @@ def analyze_pdf(pdf_url):
         # Regex Financial Parser
         # -------------------------------
         regex_financials = parse_financial_result(text)
+
+        print("\nRegex Financials")
+        print(type(regex_financials))
+        print(regex_financials)
 
         # -------------------------------
         # AI Summary
@@ -62,7 +70,7 @@ def analyze_pdf(pdf_url):
 
             tables = extract_tables(pdf_path)
 
-            print(f"Total Tables Found : {len(tables)}")
+            print(f"\nTotal Tables Found : {len(tables)}")
 
             financial_tables = get_financial_tables(tables)
 
@@ -103,6 +111,10 @@ def analyze_pdf(pdf_url):
 
             print(f"Table Parser Error : {e}")
 
+        print("\nTable Financials")
+        print(type(table_financials))
+        print(table_financials)
+
         # -------------------------------
         # Merge Regex + Table
         # -------------------------------
@@ -111,24 +123,38 @@ def analyze_pdf(pdf_url):
             table_financials
         )
 
+        print("\nMerged Financials")
+        print(type(financials))
+        print(financials)
+
+        if isinstance(financials, dict):
+            print("\nFinancial Value Types")
+            for k, v in financials.items():
+                print(f"{k} --> {type(v)} --> {v}")
+
         # -------------------------------
         # Growth
         # -------------------------------
+        print("\nRunning Growth Calculator...")
         growth = calculate_growth(financials)
+        print(growth)
 
         # -------------------------------
         # Trend
         # -------------------------------
+        print("\nRunning Trend Analyzer...")
         trend = analyze_trends(financial_data)
 
         # -------------------------------
         # Quality
         # -------------------------------
+        print("\nRunning Quality Analyzer...")
         quality = analyze_quality(trend)
 
         # -------------------------------
         # Score
         # -------------------------------
+        print("\nRunning Financial Score...")
         score = calculate_financial_score(
             growth,
             quality
@@ -137,6 +163,7 @@ def analyze_pdf(pdf_url):
         # -------------------------------
         # AI Engine
         # -------------------------------
+        print("\nRunning AI Engine...")
         ai_engine = build_ai_engine(
             metrics=metrics,
             financials=financials,
@@ -146,35 +173,32 @@ def analyze_pdf(pdf_url):
             score=score
         )
 
+        print("\nPIPELINE COMPLETED SUCCESSFULLY")
+
         return {
 
             "metrics": metrics,
-
             "regex_financials": regex_financials,
-
             "table_financials": table_financials,
-
             "financials": financials,
-
             "growth": growth,
-
             "financial_data": financial_data,
-
             "trend": trend,
-
             "quality": quality,
-
             "score": score,
-
             "ai_engine": ai_engine,
-
             "ai": ai
 
         }
 
     except Exception as e:
 
-        print(f"Pipeline Error : {e}")
+        import traceback
+
+        print("=" * 80)
+        print("PIPELINE ERROR")
+        traceback.print_exc()
+        print("=" * 80)
 
         return None
 
