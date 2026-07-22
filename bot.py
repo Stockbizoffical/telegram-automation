@@ -80,6 +80,9 @@ for announcement in announcements:
 
             analysis = analyze_pdf(pdf_url)
 
+            if not isinstance(analysis, dict):
+                analysis = {}
+
             if analysis:
 
                 ai_message = format_ai_analysis(
@@ -87,11 +90,13 @@ for announcement in announcements:
                     analysis
                 )
 
-                if ai_message:
+                if ai_message and ai_message.strip():
 
                     message = ai_message
 
-                    ai(f"AI Analysis Completed : {company}")
+                    ai(
+                        f"AI Analysis Completed : {company}"
+                    )
 
                 else:
 
@@ -125,31 +130,26 @@ for announcement in announcements:
 
         if send_message(message):
 
-    save_news(
-        SOURCE,
-        news_id
-    )
+            save_news(
+                SOURCE,
+                news_id
+            )
 
-    success(
-        f"Telegram Sent : {company}"
-    )
+            print(f"✅ Sent : {company}")
 
-else:
+            success(
+                f"Telegram Sent : {company}"
+            )
 
-    warning(
-        f"Telegram Send Failed : {company}"
-    )
+        else:
 
-        print(f"✅ Sent : {company}")
-
-        success(
-            f"Telegram Sent : {company}"
-        )
+            warning(
+                f"Telegram Send Failed : {company}"
+            )
 
     except Exception as e:
 
         print(f"❌ Error : {company}")
-
         print(e)
 
         error(f"{company} : {e}")
