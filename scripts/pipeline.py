@@ -8,6 +8,7 @@ from scripts.result_parser import extract_metrics
 from scripts.ai_summary import generate_summary
 from scripts.table_parser import extract_tables, table_to_dictionary
 from scripts.smart_mapper import normalize_dictionary
+from scripts.financial_mapper import map_financial_data
 from scripts.trend_analyzer import analyze_trends
 from scripts.quality_analyzer import analyze_quality
 from scripts.result_pdf_parser import parse_financial_result
@@ -36,7 +37,7 @@ def analyze_pdf(pdf_url):
         metrics = extract_metrics(text)
 
         # ---------------------------------
-        # Parse Financial Values
+        # Parse Financial Values (Regex)
         # ---------------------------------
         financials = parse_financial_result(text)
 
@@ -54,6 +55,7 @@ def analyze_pdf(pdf_url):
         # Extract Financial Tables
         # ---------------------------------
         financial_data = {}
+        mapped_financials = {}
 
         try:
 
@@ -64,6 +66,9 @@ def analyze_pdf(pdf_url):
                 financial_data = table_to_dictionary(tables[0])
 
                 financial_data = normalize_dictionary(financial_data)
+
+                # Table Based Financial Mapping
+                mapped_financials = map_financial_data(financial_data)
 
         except Exception as e:
 
@@ -87,6 +92,8 @@ def analyze_pdf(pdf_url):
             "metrics": metrics,
 
             "financials": financials,
+
+            "mapped_financials": mapped_financials,
 
             "growth": growth,
 
