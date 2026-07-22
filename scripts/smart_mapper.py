@@ -1,96 +1,79 @@
 """
 Stock Biz AI
-Financial Mapper V2
+Smart Financial Mapper
 """
 
+FINANCIAL_ALIASES = {
 
-KEYWORDS = {
-
-    "revenue": [
-        "revenue",
-        "revenue from operations",
-        "total income",
-        "income from operations",
-        "income",
-        "sales",
-        "net sales"
+    "Revenue": [
+        "Revenue",
+        "Revenue from Operations",
+        "Revenue From Operations",
+        "Income from Operations",
+        "Income From Operations",
+        "Sales",
+        "Net Sales",
+        "Total Income",
+        "Operating Revenue"
     ],
 
-    "ebitda": [
-        "ebitda",
-        "operating profit",
-        "operating profit before depreciation"
+    "PAT": [
+        "Profit After Tax",
+        "Net Profit",
+        "Profit for the Period",
+        "Profit After Tax (PAT)",
+        "Profit for period",
+        "Net Profit After Tax",
+        "Profit attributable to owners"
     ],
 
-    "pat": [
-        "profit after tax",
-        "net profit",
-        "profit for the period",
-        "profit after taxation",
-        "profit attributable to owners"
+    "EBITDA": [
+        "EBITDA",
+        "Operating Profit",
+        "Operating EBITDA",
+        "EBIT"
     ],
 
-    "eps": [
-        "eps",
-        "earning per share",
-        "earnings per share",
-        "basic eps",
-        "diluted eps"
+    "EPS": [
+        "EPS",
+        "Basic EPS",
+        "Diluted EPS",
+        "Earnings Per Share",
+        "Basic Earnings Per Share"
     ]
-
 }
 
 
-def normalize(text):
+def normalize_dictionary(data):
+    """
+    Normalize Financial Keys
+    """
 
-    if text is None:
-        return ""
+    if not data:
+        return {}
 
-    return (
-        str(text)
-        .strip()
-        .lower()
-        .replace("\n", " ")
-        .replace("  ", " ")
-    )
+    normalized = {}
 
+    for key, value in data.items():
 
-def map_financial_data(financial_data):
+        key_text = str(key).strip().lower()
 
-    result = {}
+        found = False
 
-    if not financial_data:
-        return result
-
-    for row_name, row_value in financial_data.items():
-
-        row = normalize(row_name)
-
-        for field, aliases in KEYWORDS.items():
-
-            if field in result:
-                continue
+        for standard_name, aliases in FINANCIAL_ALIASES.items():
 
             for alias in aliases:
 
-                if alias in row:
+                if alias.lower() in key_text:
 
-                    if isinstance(row_value, list):
-
-                        values = [
-                            str(v).strip()
-                            for v in row_value
-                            if str(v).strip()
-                        ]
-
-                        result[field] = values
-
-                    else:
-
-                        result[field] = row_value
-
+                    normalized[standard_name] = value
+                    found = True
                     break
 
-    print("Mapped Financial Fields :", list(result.keys()))
+            if found:
+                break
 
-    return result
+        if not found:
+            normalized[key] = value
+
+    return normalized
