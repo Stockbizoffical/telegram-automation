@@ -3,40 +3,50 @@ from scripts.telegram import send_message
 from scripts.storage import save_news
 from scripts.formatter import format_bse_announcement
 from scripts.engine import get_valid_announcements
+from scripts.logger import log
 
 SOURCE = "bse"
 
 print("🚀 Stock Biz AI Bot Started")
+log("Bot Started")
 
 announcements = get_bse_announcements()
 
 if not announcements:
     print("❌ No announcements found.")
+    log("No announcements found")
     exit()
 
-# केवल Valid Categories
-announcements = get_valid_announcements(announcements)
+announcements = get_valid_announcements(announcements, SOURCE)
 
 if not announcements:
     print("ℹ️ No High Priority Announcements.")
+    log("No High Priority Announcements")
     exit()
-
-last_news = get_last_news(SOURCE)
 
 for announcement in announcements:
 
     news_id = announcement.get("NEWSID", "")
 
-    if news_id == last_news:
-        print(f"⏩ Skip Duplicate : {news_id}")
-        continue
+    try:
 
-    message = format_bse_announcement(announcement)
+        message = format_bse_announcement(announcement)
 
-    send_message(message)
+        send_message(message)
 
-    save_news(SOURCE, news_id)
+        save_news(SOURCE, news_id)
 
-    print(f"✅ Sent : {announcement.get('SLONGNAME','')}")
+        company = announcement.get("SLONGNAME", "")
+
+        print(f"✅ Sent : {company}")
+
+        log(f"Sent : {company}")
+
+    except Exception as e:
+
+        print(e)
+
+        log(f"Telegram Error : {e}")
 
 print("🎉 Bot Finished Successfully")
+log("Bot Finished")
