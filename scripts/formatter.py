@@ -281,7 +281,7 @@ def format_ai_analysis(company, analysis):
 
     message += f"⚠️ <b>Risk Level</b>\n\n{risk}\n\n"
 
-summary = ai.get("summary", [])
+    summary = ai.get("summary", [])
 
     if isinstance(summary, str):
         summary = [summary]
@@ -297,7 +297,7 @@ summary = ai.get("summary", [])
             if item:
                 message += f"• {escape(str(item))}\n"
 
-        message += "\n"
+        message += "\n""
 
     remarks = quality.get("remarks", [])
 
