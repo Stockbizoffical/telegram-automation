@@ -6,25 +6,25 @@ Financial Mapper
 
 KEYWORDS = {
 
-    "revenue": [
+    "Revenue": [
         "revenue",
         "revenue from operations",
         "total income",
         "income"
     ],
 
-    "ebitda": [
+    "EBITDA": [
         "ebitda",
         "operating profit"
     ],
 
-    "pat": [
+    "PAT": [
         "profit after tax",
         "net profit",
         "profit for the period"
     ],
 
-    "eps": [
+    "EPS": [
         "eps",
         "earning per share",
         "earnings per share"
@@ -48,7 +48,7 @@ def map_financial_data(financial_data):
     if not financial_data:
         return result
 
-    for key, aliases in KEYWORDS.items():
+    for metric, aliases in KEYWORDS.items():
 
         for alias in aliases:
 
@@ -56,11 +56,19 @@ def map_financial_data(financial_data):
 
                 if alias in normalize(row_name):
 
-                    result[key] = row_value
+                    if isinstance(row_value, dict):
+
+                        result[metric] = row_value
+
+                    else:
+
+                        result[metric] = {
+                            "Current": row_value
+                        }
 
                     break
 
-            if key in result:
+            if metric in result:
                 break
 
     return result
