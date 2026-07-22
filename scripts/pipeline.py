@@ -140,38 +140,50 @@ def analyze_pdf(pdf_url):
         print(growth)
 
         # -------------------------------
-        # Trend
-        # -------------------------------
-        print("\nRunning Trend Analyzer...")
-        trend = analyze_trends(financial_data)
+# Trend
+# -------------------------------
+print("\nRunning Trend Analyzer...")
+trend = analyze_trends(financial_data)
 
-        # -------------------------------
-        # Quality
-        # -------------------------------
-        print("\nRunning Quality Analyzer...")
-        quality = analyze_quality(trend)
+print("Trend Type :", type(trend))
+print("Trend :", trend)
 
-        # -------------------------------
-        # Score
-        # -------------------------------
-        print("\nRunning Financial Score...")
-        score = calculate_financial_score(
-            growth,
-            quality
-        )
+# -------------------------------
+# Quality
+# -------------------------------
+print("\nRunning Quality Analyzer...")
+quality = analyze_quality(trend)
 
-        # -------------------------------
-        # AI Engine
-        # -------------------------------
-        print("\nRunning AI Engine...")
-        ai_engine = build_ai_engine(
-            metrics=metrics,
-            financials=financials,
-            growth=growth,
-            trend=trend,
-            quality=quality,
-            score=score
-        )
+print("Quality Type :", type(quality))
+print("Quality :", quality)
+
+# -------------------------------
+# Score
+# -------------------------------
+print("\nRunning Financial Score...")
+score = calculate_financial_score(
+    growth,
+    quality
+)
+
+print("Score Type :", type(score))
+print("Score :", score)
+
+# -------------------------------
+# AI Engine
+# -------------------------------
+print("\nRunning AI Engine...")
+ai_engine = build_ai_engine(
+    metrics=metrics,
+    financials=financials,
+    growth=growth,
+    trend=trend,
+    quality=quality,
+    score=score
+)
+
+print("AI Engine Type :", type(ai_engine))
+print("AI Engine :", ai_engine)
 
         print("\nPIPELINE COMPLETED SUCCESSFULLY")
 
