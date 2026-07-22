@@ -1,73 +1,54 @@
 """
 Stock Biz AI
-Growth Calculator
+Growth Calculator V2
 """
-
-
-def to_number(value):
-    """
-    Convert string to float
-    """
-
-    if value is None:
-        return None
-
-    try:
-
-        value = str(value).replace(",", "").replace("₹", "").strip()
-
-        return float(value)
-
-    except Exception:
-
-        return None
-
-
-def growth(current, previous):
-    """
-    Growth Percentage
-    """
-
-    current = to_number(current)
-    previous = to_number(previous)
-
-    if current is None or previous is None:
-        return None
-
-    if previous == 0:
-        return None
-
-    return round(((current - previous) / previous) * 100, 2)
 
 
 def calculate_growth(financials):
     """
-    Calculate Growth Metrics
+    Calculate Current, Previous and Growth %
     """
 
-    if not financials:
-        return {}
+    result = {}
 
-    return {
+    metrics = [
+        "Revenue",
+        "PAT",
+        "EBITDA",
+        "EPS"
+    ]
 
-        "revenue_growth": growth(
-            financials.get("revenue_current"),
-            financials.get("revenue_previous")
-        ),
+    for metric in metrics:
 
-        "pat_growth": growth(
-            financials.get("pat_current"),
-            financials.get("pat_previous")
-        ),
+        current = financials.get(f"{metric}_current")
+        previous = financials.get(f"{metric}_previous")
 
-        "ebitda_growth": growth(
-            financials.get("ebitda_current"),
-            financials.get("ebitda_previous")
-        ),
+        growth = None
 
-        "eps_growth": growth(
-            financials.get("eps_current"),
-            financials.get("eps_previous")
-        )
+        if (
+            current is not None
+            and previous not in (None, 0)
+        ):
 
-    }
+            try:
+
+                growth = round(
+                    ((current - previous) / abs(previous)) * 100,
+                    2
+                )
+
+            except Exception:
+
+                growth = None
+
+        result[metric] = {
+
+            "current": current,
+
+            "previous": previous,
+
+            "growth": growth
+
+        }
+
+    return result
