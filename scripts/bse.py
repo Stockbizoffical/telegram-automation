@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime
+import time
 
 URL = "https://api.bseindia.com/BseIndiaAPI/api/AnnSubCategoryGetData/w"
 
@@ -15,6 +16,10 @@ def get_bse_announcements():
 
     today = datetime.now().strftime("%Y%m%d")
 
+    print("=" * 60)
+    print("Searching Date :", today)
+    print("=" * 60)
+
     params = {
         "pageno": 1,
         "strCat": "-1",
@@ -28,21 +33,37 @@ def get_bse_announcements():
 
     try:
 
-        response = requests.get(
-            URL,
-            headers=HEADERS,
-            params=params,
-            timeout=20
-        )
+        session = requests.Session()
+        session.headers.update(HEADERS)
+
+        response = None
+
+        for attempt in range(3):
+
+            try:
+
+                response = session.get(
+                    URL,
+                    params=params,
+                    timeout=60
+                )
+
+                response.raise_for_status()
+                break
+
+            except requests.exceptions.RequestException as e:
+
+                print(f"Attempt {attempt + 1} Failed : {e}")
+
+                if attempt < 2:
+                    time.sleep(5)
+                else:
+                    raise
 
         print("=" * 60)
         print("STATUS CODE :", response.status_code)
         print("REQUEST URL :", response.url)
         print("=" * 60)
-
-        if response.status_code != 200:
-            print("❌ Failed to fetch announcements.")
-            return []
 
         data = response.json()
 
@@ -52,7 +73,6 @@ def get_bse_announcements():
 
         financial_results = []
 
-        # Result Keywords
         include_keywords = [
             "financial result",
             "financial results",
@@ -65,7 +85,6 @@ def get_bse_announcements():
             "results"
         ]
 
-        # Skip Keywords
         skip_keywords = [
             "board meeting",
             "meeting of board",
@@ -90,11 +109,9 @@ def get_bse_announcements():
                 str(item.get("SUBCATNAME", ""))
             ).lower()
 
-            # Skip unwanted announcements
             if any(word in text for word in skip_keywords):
                 continue
 
-            # Keep only financial results
             if any(word in text for word in include_keywords):
                 financial_results.append(item)
 
@@ -102,18 +119,18 @@ def get_bse_announcements():
 
         if financial_results:
 
-            print("\nFIRST FINANCIAL RESULT")
-            print("=" * 60)
-
             first = financial_results[0]
 
+            print("=" * 60)
+            print("FIRST FINANCIAL RESULT")
+            print("=" * 60)
             print("Company :", first.get("SLONGNAME"))
             print("Headline :", first.get("HEADLINE"))
             print("Attachment :", first.get("ATTACHMENTNAME"))
-
             print("=" * 60)
 
         else:
+
             print("❌ No Financial Result Found.")
 
         return financial_results
