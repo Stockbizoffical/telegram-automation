@@ -69,13 +69,28 @@ def analyze_pdf(pdf_url):
 
             if financial_tables:
 
-                best_table = financial_tables[0]
+    best_score = -1
+    best_data = {}
 
-                financial_data = table_to_dictionary(best_table)
+    for table in financial_tables:
 
-                financial_data = normalize_dictionary(
-                    financial_data
-                )
+        temp_data = table_to_dictionary(table)
+
+        temp_data = normalize_dictionary(temp_data)
+
+        mapped = map_financial_data(temp_data)
+
+        score = len(mapped)
+
+        if score > best_score:
+
+            best_score = score
+            best_data = mapped
+            financial_data = temp_data
+
+    table_financials = best_data
+
+    print(f"Best Financial Table Score : {best_score}")
 
                 table_financials = map_financial_data(
                     financial_data
