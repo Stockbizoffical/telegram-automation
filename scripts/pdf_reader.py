@@ -1,36 +1,65 @@
-import requests
-import pdfplumber
+import os
 import tempfile
 
+import pdfplumber
+import requests
 
-def extract_pdf_text(pdf_url):
+
+def process_pdf(pdf_url):
+    """
+    Download PDF
+    Extract Text
+    Return Text + Local PDF Path
+    """
 
     try:
 
         response = requests.get(pdf_url, timeout=30)
-
         response.raise_for_status()
 
-        with tempfile.NamedTemporaryFile(suffix=".pdf") as temp:
+        temp = tempfile.NamedTemporaryFile(
+            delete=False,
+            suffix=".pdf"
+        )
 
-            temp.write(response.content)
-            temp.flush()
+        temp.write(response.content)
+        temp.close()
 
-            text = ""
+        pdf_path = temp.name
 
-            with pdfplumber.open(temp.name) as pdf:
+        text = ""
 
-                for page in pdf.pages:
+        with pdfplumber.open(pdf_path) as pdf:
 
-                    page_text = page.extract_text()
+            for page in pdf.pages:
 
-                    if page_text:
-                        text += page_text + "\n"
+                page_text = page.extract_text()
 
-            return text
+                if page_text:
+                    text += page_text + "\n"
+
+        return {
+
+            "text": text,
+
+            "pdf_path": pdf_path
+
+        }
 
     except Exception as e:
 
-        print(f"PDF Error : {e}")
+        print(f"PDF Reader Error : {e}")
 
-        return ""
+        return None
+
+
+def delete_temp_pdf(pdf_path):
+
+    try:
+
+        if os.path.exists(pdf_path):
+            os.remove(pdf_path)
+
+    except Exception as e:
+
+        print(e)
