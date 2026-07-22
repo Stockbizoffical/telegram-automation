@@ -100,8 +100,10 @@ def get_star(score):
         return "★☆☆☆☆"
 
     except Exception:
-        return "-"
-        def format_bse_announcement(data):
+    return "-"
+
+
+def format_bse_announcement(data):
     """
     Format BSE Corporate Announcement
     """
@@ -186,8 +188,9 @@ def get_star(score):
 """
 
     return message.strip()
-def format_ai_analysis(company, analysis):
 
+
+def format_ai_analysis(company, analysis):
     if not analysis:
         return ""
 
@@ -276,7 +279,8 @@ def format_ai_analysis(company, analysis):
     message += f"💡 <b>Investment View</b>\n\n{investment}\n\n"
 
     message += f"⚠️ <b>Risk Level</b>\n\n{risk}\n\n"
-        summary = ai.get("summary", [])
+
+summary = ai.get("summary", [])
 
     if isinstance(summary, str):
         summary = [summary]
