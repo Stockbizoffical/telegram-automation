@@ -4,11 +4,13 @@ from html import escape
 
 def safe(value, default="-"):
     """Return safe string value."""
+
     if value is None:
         return default
 
     if isinstance(value, str):
         value = value.strip()
+
         if not value:
             return default
 
@@ -16,26 +18,30 @@ def safe(value, default="-"):
 
 
 def format_number(value):
-    """Format numbers nicely."""
+    """
+    Format Financial Numbers
+    """
 
     if value in (None, "-", ""):
         return "-"
 
     try:
+
         num = float(str(value).replace(",", ""))
 
         if abs(num) >= 10000000:
-            return f"{num/10000000:.2f} Cr"
+            return f"₹{num / 10000000:.2f} Cr"
 
         elif abs(num) >= 100000:
-            return f"{num/100000:.2f} L"
+            return f"₹{num / 100000:.2f} L"
 
         elif num.is_integer():
-            return f"{int(num):,}"
+            return f"₹{int(num):,}"
 
-        return f"{num:,.2f}"
+        return f"₹{num:,.2f}"
 
     except Exception:
+
         return str(value)
 
 
@@ -57,10 +63,10 @@ def get_growth_icon(value):
         elif value >= 0:
             return "🟡"
 
-        else:
-            return "🔴"
+        return "🔴"
 
     except Exception:
+
         return "⚪"
 
 
@@ -69,11 +75,14 @@ def get_signal_icon(signal):
     signal = str(signal).upper()
 
     mapping = {
-        "BUY": "🟢",
+
         "STRONG BUY": "🚀",
+        "BUY": "🟢",
         "HOLD": "🟡",
         "SELL": "🔴",
+        "AVOID": "⛔",
         "STRONG SELL": "⛔"
+
     }
 
     return mapping.get(signal, "⚪")
@@ -100,6 +109,7 @@ def get_star(score):
         return "★☆☆☆☆"
 
     except Exception:
+
         return "-"
 
 
@@ -115,12 +125,16 @@ def format_bse_announcement(data):
     category = str(data.get("CATEGORY", "OTHER")).upper()
 
     try:
+
         dt = datetime.fromisoformat(raw_date)
         date = dt.strftime("%d %b %Y | %I:%M %p")
+
     except Exception:
+
         date = safe(raw_date)
 
     category_icon = {
+
         "RESULT": "📊",
         "FINANCIAL RESULTS": "📊",
         "DIVIDEND": "💰",
@@ -132,11 +146,12 @@ def format_bse_announcement(data):
         "BLOCK": "🏦",
         "AGM": "👥",
         "EGM": "👥",
-        "PREFERENTIAL ISSUE": "🪙",
         "RIGHTS": "📜",
         "MERGER": "🔄",
         "ACQUISITION": "🤝",
+        "PREFERENTIAL ISSUE": "🪙",
         "OTHER": "📢",
+
     }
 
     icon = category_icon.get(category, "📢")
@@ -188,23 +203,22 @@ def format_bse_announcement(data):
 """
 
     return message.strip()
+    def format_ai_analysis(company, analysis):
+    """
+    Format AI Financial Analysis
+    """
 
-
-def format_ai_analysis(company, analysis):
     if not analysis:
         return ""
 
     ai = analysis.get("ai_engine", {})
-
-    financial = analysis.get("financials") or analysis.get("financial_data", {})
-    financial = financial if isinstance(financial, dict) else {}
     growth = analysis.get("growth", {})
     trend = analysis.get("trend", {})
     quality = analysis.get("quality", {})
     score = analysis.get("score", {})
 
-    ai_score = ai.get("score") or score.get("score", 0)
-    signal = ai.get("signal") or score.get("signal", "HOLD")
+    ai_score = ai.get("score", score.get("score", 0))
+    signal = ai.get("signal", score.get("signal", "HOLD"))
     verdict = ai.get("verdict", score.get("verdict", "-"))
     investment = ai.get("investment_view", "-")
     risk = ai.get("risk", "-")
@@ -224,11 +238,13 @@ def format_ai_analysis(company, analysis):
 
 ⭐ <b>AI Score</b>
 
-{ai_score}/100
+{get_star(ai_score)}
+
+<b>{ai_score}/100</b>
 
 {signal_icon} <b>Signal</b>
 
-{signal}
+{escape(str(signal))}
 
 ━━━━━━━━━━━━━━━━━━
 
@@ -238,48 +254,49 @@ def format_ai_analysis(company, analysis):
 
     metrics = [
 
-        ("Revenue", "revenue_growth", "📈"),
-        ("PAT", "pat_growth", "💰"),
-        ("EBITDA", "ebitda_growth", "⚙️"),
-        ("EPS", "eps_growth", "💵"),
+        ("Revenue", "revenue", "📈"),
+        ("PAT", "pat", "💰"),
+        ("EBITDA", "ebitda", "⚙️"),
+        ("EPS", "eps", "💵"),
 
     ]
 
-    for metric, growth_key, emoji in metrics:
+    for title, key, emoji in metrics:
 
-        current = "-"
-
-        if metric in financial:
-
-            current = financial[metric].get("Current", "-")
+        current = growth.get(f"{key}_current")
+        previous = growth.get(f"{key}_previous")
+        growth_value = growth.get(f"{key}_growth")
 
         current = format_number(current)
-
-        growth_value = growth.get(growth_key)
+        previous = format_number(previous)
 
         icon = get_growth_icon(growth_value)
 
-        message += f"{emoji} <b>{metric}</b>\n"
+        if growth_value is None:
 
-        message += f"Current : {current}\n"
-
-        if growth_value is not None:
-
-            message += f"{icon} Growth : {growth_value:.2f}%\n"
+            growth_text = "-"
 
         else:
 
-            message += "Growth : -\n"
+            if growth_value >= 0:
+                growth_text = f"+{growth_value:.2f}%"
+            else:
+                growth_text = f"{growth_value:.2f}%"
 
-        message += "\n"
+        message += (
+            f"{emoji} <b>{title}</b>\n"
+            f"Current  : {current}\n"
+            f"Previous : {previous}\n"
+            f"{icon} Growth : {growth_text}\n\n"
+        )
 
     message += "━━━━━━━━━━━━━━━━━━\n\n"
 
-    message += f"🎯 <b>Verdict</b>\n\n{verdict}\n\n"
+    message += f"🎯 <b>Verdict</b>\n\n{escape(str(verdict))}\n\n"
 
-    message += f"💡 <b>Investment View</b>\n\n{investment}\n\n"
+    message += f"💡 <b>Investment View</b>\n\n{escape(str(investment))}\n\n"
 
-    message += f"⚠️ <b>Risk Level</b>\n\n{risk}\n\n"
+    message += f"⚠️ <b>Risk Level</b>\n\n{escape(str(risk))}\n\n"
 
     summary = ai.get("summary", [])
 
@@ -308,7 +325,6 @@ def format_ai_analysis(company, analysis):
         message += "📋 <b>Quality Analysis</b>\n\n"
 
         for remark in remarks:
-
             message += f"• {escape(str(remark))}\n"
 
         message += "\n"
@@ -323,15 +339,28 @@ def format_ai_analysis(company, analysis):
 
     message += "━━━━━━━━━━━━━━━━━━\n\n"
 
-    message += f"📊 <b>Financial Health</b>\n\n{get_star(ai_score)}\n\n"
+    message += f"""📊 <b>Financial Health</b>
 
-    message += "━━━━━━━━━━━━━━━━━━\n\n"
+{get_star(ai_score)}
 
-    message += (
-        "🤖 <b>Generated by Stock Biz AI</b>\n"
-        "⚡ <b>Automated Financial Analysis</b>\n"
-        "📈 <b>Source :</b> BSE India\n\n"
-        "🚀 <b>Powered by Stock Biz AI</b>"
-    )
+━━━━━━━━━━━━━━━━━━
+
+⚠️ <b>Disclaimer</b>
+
+This report is AI generated and is meant for
+educational & informational purposes only.
+
+Please do your own research before investing.
+
+━━━━━━━━━━━━━━━━━━
+
+🤖 <b>Generated by Stock Biz AI</b>
+
+⚡ <b>Automated Financial Analysis</b>
+
+📈 <b>Source :</b> BSE India
+
+🚀 <b>Powered by Stock Biz AI</b>
+"""
 
     return message
