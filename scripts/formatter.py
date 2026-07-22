@@ -78,14 +78,13 @@ def get_signal_icon(signal):
     signal = str(signal).upper()
 
     mapping = {
-        "STRONG BUY": "🚀",
-        "BUY": "🟢",
-        "HOLD": "🟡",
-        "SELL": "🔴",
-        "AVOID": "⛔",
-        "STRONG SELL": "⛔",
-    }
-
+    "EXCELLENT": "🏆",
+    "STRONG": "🟢",
+    "GOOD": "🔵",
+    "AVERAGE": "🟡",
+    "WEAK": "🟠",
+    "VERY WEAK": "🔴",
+}
     return mapping.get(signal, "⚪")
 
 
