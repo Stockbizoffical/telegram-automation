@@ -369,7 +369,7 @@ if dividend.get("has_dividend"):
 
     message += "━━━━━━━━━━━━━━━━━━\n\n"
 
-            message += """⚠️ <b>Disclaimer</b>
+    message += """⚠️ <b>Disclaimer</b>
 
 This report is generated automatically using AI.
 
