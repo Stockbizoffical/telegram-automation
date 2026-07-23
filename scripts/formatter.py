@@ -336,7 +336,7 @@ def format_ai_analysis(company, analysis):
 
         message += f"{impact}/100\n\n"
 
-    # -------------------------------
+# -------------------------------
 # Dividend Information
 # -------------------------------
 
