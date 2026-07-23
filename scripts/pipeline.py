@@ -47,7 +47,7 @@ def analyze_pdf(pdf_url):
         # -------------------------------
         metrics = extract_metrics(text)
 
-                # -------------------------------
+        # -------------------------------
         # Dividend Parser
         # -------------------------------
         dividend = parse_dividend(text)
@@ -147,7 +147,7 @@ def analyze_pdf(pdf_url):
         print("\nRunning Growth Calculator...")
         growth = calculate_growth(financials)
         print(growth)
-                # -------------------------------
+        # -------------------------------
         # Trend
         # -------------------------------
         print("\nRunning Trend Analyzer...")
@@ -195,7 +195,7 @@ def analyze_pdf(pdf_url):
 
         print("\nPIPELINE COMPLETED SUCCESSFULLY")
 
-                return {
+        return {
 
             "metrics": metrics,
             "dividend": dividend,
