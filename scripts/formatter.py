@@ -1,4 +1,4 @@
-from datetime import datetime
+O9from datetime import datetime
 from html import escape
 
 
@@ -369,7 +369,7 @@ if dividend.get("has_dividend"):
 
     message += "━━━━━━━━━━━━━━━━━━\n\n"
 
-        message += """⚠️ <b>Disclaimer</b>
+            message += """⚠️ <b>Disclaimer</b>
 
 This report is generated automatically using AI.
 
