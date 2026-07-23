@@ -55,6 +55,7 @@ def analyze_pdf(pdf_url):
         print("\nDividend")
         print(type(dividend))
         print(dividend)
+        
         # -------------------------------
         # Regex Financial Parser
         # -------------------------------
