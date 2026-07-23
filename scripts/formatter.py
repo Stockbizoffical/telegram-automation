@@ -212,6 +212,7 @@ def format_ai_analysis(company, analysis):
     trend = analysis.get("trend", {})
     quality = analysis.get("quality", {})
     score = analysis.get("score", {})
+    dividend = analysis.get("dividend", {})
 
     ai_score = ai.get("score", score.get("score", 0))
     signal = ai.get("signal", score.get("signal", "HOLD"))
