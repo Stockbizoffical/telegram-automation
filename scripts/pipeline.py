@@ -47,6 +47,14 @@ def analyze_pdf(pdf_url):
         # -------------------------------
         metrics = extract_metrics(text)
 
+                # -------------------------------
+        # Dividend Parser
+        # -------------------------------
+        dividend = parse_dividend(text)
+
+        print("\nDividend")
+        print(type(dividend))
+        print(dividend)
         # -------------------------------
         # Regex Financial Parser
         # -------------------------------
@@ -187,9 +195,10 @@ def analyze_pdf(pdf_url):
 
         print("\nPIPELINE COMPLETED SUCCESSFULLY")
 
-        return {
+                return {
 
             "metrics": metrics,
+            "dividend": dividend,
             "regex_financials": regex_financials,
             "table_financials": table_financials,
             "financials": financials,
