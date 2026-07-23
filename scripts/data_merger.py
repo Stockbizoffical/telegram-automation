@@ -1,13 +1,10 @@
 """
 Stock Biz AI
-Financial Data Merger
+Financial Data Merger V2
 """
 
 
 def is_empty(value):
-    """
-    Check Empty Value
-    """
 
     if value is None:
         return True
@@ -30,45 +27,69 @@ def is_empty(value):
     return False
 
 
-def merge_financial_data(regex_data, table_data):
-    """
-    Merge Regex + Table Financial Data
+def is_valid_number(value):
 
-    Priority:
-    1. Table Parser
-    2. Regex Parser (Backup)
-    """
+    if is_empty(value):
+        return False
+
+    try:
+
+        value = str(value).replace(",", "").strip()
+
+        float(value)
+
+        return True
+
+    except:
+
+        return False
+
+
+def merge_financial_data(regex_data, table_data):
 
     regex_data = regex_data or {}
     table_data = table_data or {}
 
     merged = {}
 
-    all_keys = set(regex_data.keys()) | set(table_data.keys())
+    all_keys = sorted(
+        set(regex_data.keys()) |
+        set(table_data.keys())
+    )
 
     print("=" * 80)
-    print("MERGING FINANCIAL DATA")
+    print("MERGING FINANCIAL DATA V2")
     print("=" * 80)
 
-    for key in sorted(all_keys):
+    for key in all_keys:
 
         regex_value = regex_data.get(key)
         table_value = table_data.get(key)
 
         print(f"\nKEY : {key}")
-        print(f"Regex : {regex_value}")
-        print(f"Table : {table_value}")
+        print("Regex :", regex_value)
+        print("Table :", table_value)
 
-        # Table Parser gets highest priority
-        if not is_empty(table_value):
+        # Highest Priority
+        if is_valid_number(table_value):
 
             merged[key] = table_value
             print("Selected : TABLE")
 
-        elif not is_empty(regex_value):
+        elif is_valid_number(regex_value):
 
             merged[key] = regex_value
             print("Selected : REGEX")
+
+        elif not is_empty(table_value):
+
+            merged[key] = table_value
+            print("Selected : TABLE (TEXT)")
+
+        elif not is_empty(regex_value):
+
+            merged[key] = regex_value
+            print("Selected : REGEX (TEXT)")
 
         else:
 
