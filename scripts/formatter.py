@@ -336,6 +336,31 @@ def format_ai_analysis(company, analysis):
 
         message += f"{impact}/100\n\n"
 
+    # -------------------------------
+# Dividend Information
+# -------------------------------
+
+if dividend.get("has_dividend"):
+
+    message += "━━━━━━━━━━━━━━━━━━\n\n"
+
+    message += "💰 <b>Dividend</b>\n\n"
+
+    message += (
+        f"Type : {escape(str(dividend.get('dividend_type', '-')))}\n"
+    )
+
+    amount = dividend.get("dividend_per_share")
+
+    if amount is not None:
+        message += f"Amount : ₹{amount} / Share\n"
+
+    record = dividend.get("record_date")
+
+    if record:
+        message += f"Record Date : {escape(str(record))}\n"
+
+    message += "\n"
     message += "━━━━━━━━━━━━━━━━━━\n\n"
 
     message += "📊 <b>Financial Health</b>\n\n"
