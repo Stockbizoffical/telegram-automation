@@ -22,15 +22,15 @@ def get_bse_announcements():
     print("=" * 60)
 
     params = {
-    "pageno": 1,
-    "strCat": "-1",
-    "strPrevDate": today,
-    "strToDate": today,
-    "strScrip": "",
-    "strSearch": "P",
-    "strType": "C",
-    "subcategory": "-1",
-}
+        "pageno": 1,
+        "strCat": "-1",
+        "strPrevDate": today,
+        "strToDate": today,
+        "strScrip": "",
+        "strSearch": "P",
+        "strType": "C",
+        "subcategory": "-1",
+    }
 
     try:
 
@@ -42,7 +42,6 @@ def get_bse_announcements():
         for attempt in range(3):
 
             try:
-
                 response = session.get(
                     URL,
                     params=params,
@@ -86,28 +85,28 @@ def get_bse_announcements():
             "financial result",
             "financial results",
             "quarterly results",
+            "quarterly financial results",
             "unaudited financial results",
             "audited financial results",
             "standalone financial results",
             "consolidated financial results",
+            "statement of unaudited financial results",
+            "statement of audited financial results",
             "quarter ended",
-            "results"
+            "results",
         ]
 
         skip_keywords = [
-            "board meeting",
-            "meeting of board",
-            "intimation",
-            "prior intimation",
-            "notice",
             "closure of trading window",
             "investor presentation",
             "analyst meet",
             "conference call",
             "earnings call",
             "press release",
-            "newspaper publication"
+            "newspaper publication",
         ]
+
+        print("\nChecking announcements...\n")
 
         for item in announcements:
 
@@ -115,31 +114,49 @@ def get_bse_announcements():
                 str(item.get("HEADLINE", "")) + " " +
                 str(item.get("MORE", "")) + " " +
                 str(item.get("CATEGORYNAME", "")) + " " +
-                str(item.get("SUBCATNAME", ""))
+                str(item.get("SUBCATNAME", "")) + " " +
+                str(item.get("NEWSSUB", "")) + " " +
+                str(item.get("ATTACHMENTNAME", "")) + " " +
+                str(item.get("XML_NAME", ""))
             ).lower()
 
-            if any(word in text for word in skip_keywords):
+            print("-" * 60)
+            print("Company     :", item.get("SLONGNAME"))
+            print("Headline    :", item.get("HEADLINE"))
+            print("Category    :", item.get("CATEGORYNAME"))
+            print("SubCategory :", item.get("SUBCATNAME"))
+            print("NewsSub     :", item.get("NEWSSUB"))
+
+            if (
+                any(word in text for word in skip_keywords)
+                and not any(word in text for word in include_keywords)
+            ):
+                print("Skipped")
                 continue
 
             if any(word in text for word in include_keywords):
+                print("Financial Result Detected")
                 financial_results.append(item)
 
+        print("=" * 60)
         print(f"FINANCIAL RESULTS : {len(financial_results)}")
+        print("=" * 60)
 
         if financial_results:
 
             first = financial_results[0]
 
-            print("=" * 60)
             print("FIRST FINANCIAL RESULT")
             print("=" * 60)
-            print("Company :", first.get("SLONGNAME"))
-            print("Headline :", first.get("HEADLINE"))
+            print("Company    :", first.get("SLONGNAME"))
+            print("Headline   :", first.get("HEADLINE"))
+            print("Category   :", first.get("CATEGORYNAME"))
+            print("SubCategory:", first.get("SUBCATNAME"))
+            print("NewsSub    :", first.get("NEWSSUB"))
             print("Attachment :", first.get("ATTACHMENTNAME"))
             print("=" * 60)
 
         else:
-
             print("❌ No Financial Result Found.")
 
         return financial_results
