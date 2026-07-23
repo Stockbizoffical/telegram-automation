@@ -68,30 +68,29 @@ def calculate_financial_score(growth, quality):
 
     # Final Verdict
     if score >= 90:
-        verdict = "Excellent Quarterly Result"
-        signal = "STRONG BUY"
-        color = "GREEN"
+    verdict = "Excellent Financial Performance"
+    signal = "Excellent"
+    color = "GREEN"
 
-    elif score >= 75:
-        verdict = "Strong Quarterly Result"
-        signal = "BUY"
-        color = "GREEN"
+elif score >= 75:
+    verdict = "Strong Financial Performance"
+    signal = "Strong"
+    color = "GREEN"
 
-    elif score >= 60:
-        verdict = "Average Quarterly Result"
-        signal = "HOLD"
-        color = "YELLOW"
+elif score >= 60:
+    verdict = "Good Financial Performance"
+    signal = "Good"
+    color = "YELLOW"
 
-    elif score >= 40:
-        verdict = "Weak Quarterly Result"
-        signal = "SELL"
-        color = "ORANGE"
+elif score >= 40:
+    verdict = "Average Financial Performance"
+    signal = "Average"
+    color = "ORANGE"
 
-    else:
-        verdict = "Poor Quarterly Result"
-        signal = "AVOID"
-        color = "RED"
-
+else:
+    verdict = "Weak Financial Performance"
+    signal = "Weak"
+    color = "RED"
     return {
 
         "score": score,
