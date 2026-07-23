@@ -3,6 +3,7 @@ Stock Biz AI
 Pipeline Module
 """
 
+from scripts.dividend_parser import parse_dividend
 from scripts.pdf_reader import process_pdf, delete_temp_pdf
 from scripts.result_parser import extract_metrics
 from scripts.ai_summary import generate_summary
