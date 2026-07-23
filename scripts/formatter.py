@@ -336,31 +336,32 @@ def format_ai_analysis(company, analysis):
 
         message += f"{impact}/100\n\n"
 
-# -------------------------------
-# Dividend Information
-# -------------------------------
+    # -------------------------------
+    # Dividend Information
+    # -------------------------------
 
-if dividend.get("has_dividend"):
+    if dividend.get("has_dividend"):
 
-    message += "━━━━━━━━━━━━━━━━━━\n\n"
+        message += "━━━━━━━━━━━━━━━━━━\n\n"
 
-    message += "💰 <b>Dividend</b>\n\n"
+        message += "💰 <b>Dividend</b>\n\n"
 
-    message += (
-        f"Type : {escape(str(dividend.get('dividend_type', '-')))}\n"
-    )
+        message += (
+            f"Type : {escape(str(dividend.get('dividend_type', '-')))}\n"
+        )
 
-    amount = dividend.get("dividend_per_share")
+        amount = dividend.get("dividend_per_share")
 
-    if amount is not None:
-        message += f"Amount : ₹{amount} / Share\n"
+        if amount is not None:
+            message += f"Amount : ₹{amount} / Share\n"
 
-    record = dividend.get("record_date")
+        record = dividend.get("record_date")
 
-    if record:
-        message += f"Record Date : {escape(str(record))}\n"
+        if record:
+            message += f"Record Date : {escape(str(record))}\n"
 
-    message += "\n"
+        message += "\n"
+
     message += "━━━━━━━━━━━━━━━━━━\n\n"
 
     message += "📊 <b>Financial Health</b>\n\n"
@@ -369,7 +370,7 @@ if dividend.get("has_dividend"):
 
     message += "━━━━━━━━━━━━━━━━━━\n\n"
 
-       message += """⚠️ <b>Disclaimer</b>
+    message += """⚠️ <b>Disclaimer</b>
 
 This report is generated automatically using AI.
 
